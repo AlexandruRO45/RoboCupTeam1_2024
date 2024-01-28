@@ -1,0 +1,20 @@
+#VRML_SIM R2023b utf8
+# WHy not....
+# template language: javascript
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+
+PROTO Statium_background_light [
+  field SFString{"dawn_cloudy_empty", "dusk", "empty_office", "entrance_hall", "factory", "mars", "morning_cloudy_empty", "mountains", "music_hall", "noon_building_overcast", "noon_cloudy_countryside", "noon_cloudy_empty", "noon_cloudy_mountains", "noon_park_empty", "noon_stormy_empty", "noon_sunny_empty", "noon_sunny_garden", "stadium", "stadium_dry", "twilight_cloudy_empty"}
+ texture "mountains" # Should be equivalent to the 'texture' field of the TexturedBackground.
+  field SFFloat luminosity 1 # Multiplies the `Light.intensity` field.
+  field SFBool castShadows TRUE # Defines whether the light should cast shadows.
+
+]
+{
+  TexturedBackgroundLight {
+    texture IS texture
+    luminosity IS luminosity
+    castShadows IS castShadows
+  }
+}

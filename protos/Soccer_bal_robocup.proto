@@ -1,0 +1,21 @@
+#VRML_SIM R2023b utf8
+# The soccer ball for robocup
+# template language: javascript
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/balls/protos/RobocupSoccerBall.proto"
+
+PROTO Soccer_bal_robocup [
+  field SFVec3f translation 0 0 0.07
+  field SFRotation rotation 0 0 1 0
+  field SFString name "robocup soccer ball"
+  field SFInt32{1,2,3,4,5} size 1 # Defines the ball size and mass according to FIFA standards.
+
+]
+{
+  RobocupSoccerBall {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    size IS size
+  }
+}

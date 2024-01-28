@@ -1,0 +1,27 @@
+#VRML_SIM R2023b utf8
+# The RoboCup Soccer Field
+# template language: javascript
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/robotstadium/protos/RobotstadiumSoccerField.proto"
+
+PROTO Field [
+  field SFVec3f translation 0 0 0
+  field SFRotation rotation 0 0 1 0
+  field SFString name "robotstadium soccer field"
+  field SFString contactMaterial "default" # Is `Solid.contactMaterial`.
+  field SFColor frame1Color 1 1 1 # Defines the color of the first goal frame.
+  field SFColor frame2Color 1 1 1 # Defines the color of the second goal frame.
+  field SFFloat postRadius 0.05 # Defines the radius of the goal posts.
+
+]
+{
+  RobotstadiumSoccerField {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    contactMaterial IS contactMaterial
+    frame1Color IS frame1Color
+    frame2Color IS frame2Color
+    postRadius IS postRadius
+  }
+}

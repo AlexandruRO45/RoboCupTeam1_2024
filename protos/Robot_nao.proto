@@ -1,0 +1,81 @@
+#VRML_SIM R2023b utf8
+# The soccer players...let the match begin
+# template language: javascript
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/softbank/nao/protos/Nao.proto"
+
+PROTO Robot_nao [
+  field SFVec3f translation 0 0 0.334 # Is `Pose.translation`.
+  field SFRotation rotation 0 0 1 0 # Is `Pose.rotation`.
+  field SFString name "NAO" # Is `Solid.name`.
+  field SFString{"V3.3", "V4 (orange)", "V4 (blue)",
+ "V5 (red)", "V5 (blue)", "V5 (grey)"}
+ version "V5 (red)" # Defines the Nao version.
+  field SFInt32{21, 25} degreeOfFreedom 25 # Defines the number of degrees of freedom; either "21" (fixed fingers) or "25" (articulated fingers).
+  field MFColor customColor [] # Defines the color of the secondary plastic components.
+  field SFString controller "<generic>"
+  field MFString controllerArgs [] # Is `Robot.controllerArgs`.
+  field SFString window "<generic>"
+  field SFString customData "" # Is `Robot.customData`.
+  field SFBool supervisor FALSE # Is `Robot.supervisor`.
+  field SFBool synchronization TRUE # Is `Robot.synchronization`.
+  field SFBool selfCollision FALSE # Is `Robot.selfCollision`.
+  field SFFloat gpsAccuracy 0.0 # Is `GPS.accuracy`.
+  field SFInt32 cameraWidth 160 # Is `Camera.width`.
+  field SFInt32 cameraHeight 120 # Is `Camera.height`.
+  field SFBool cameraAntiAliasing FALSE # Is `Camera.antiAliasing`.
+  field SFFloat cameraAmbientOcclusionRadius 0 # Is `Camera.ambientOcclusionRadius`.
+  field SFFloat cameraBloomThreshold -1 # Is `Camera.bloomThreshold`.
+  field SFNode cameraFocus NULL # Is `Camera.focus`.
+  field SFNode jersey NULL # Extends the robot with a jersey: typically NaoJersey.proto.
+  field SFInt32 channel 0 # Defines the channel for the `Emitter` and `Receiver` devices.
+  field SFString contactMaterial "NAO material" # Defines the `Solid.contactMaterial` for all the robot parts, except the feet and the fingers.
+  field SFString footContactMaterial "NAO foot material" # Defines the `Solid.contactMaterial` for the feet.
+  field SFString fingerContactMaterial "NAO finger material" # Defines the `Solid.contactMaterial` for the fingers.
+  field SFFloat fingerRadius 0.0055 # Defines the radius of all the fingers.
+  field SFFloat fingerTorque 10.0 # Defines the torque applied on the finger motors.
+  field MFNode bodySlot [] # Extends the robot with new nodes in the body slot.
+  field MFNode headSlot [] # Extends the robot with new nodes in the head slot.
+  field MFNode leftFootSlot [] # Extends the robot with new nodes in the left foot slot.
+  field MFNode rightFootSlot [] # Extends the robot with new nodes in the right foot slot.
+  field MFNode leftHandSlot [] # Extends the robot with new nodes in the left hand slot.
+  field MFNode rightHandSlot [] # Extends the robot with new nodes in the right hand slot.
+
+]
+{
+  Nao {
+    translation IS translation
+    rotation IS rotation
+    name IS name
+    version IS version
+    degreeOfFreedom IS degreeOfFreedom
+    customColor IS customColor
+    controller IS controller
+    controllerArgs IS controllerArgs
+    window IS window
+    customData IS customData
+    supervisor IS supervisor
+    synchronization IS synchronization
+    selfCollision IS selfCollision
+    gpsAccuracy IS gpsAccuracy
+    cameraWidth IS cameraWidth
+    cameraHeight IS cameraHeight
+    cameraAntiAliasing IS cameraAntiAliasing
+    cameraAmbientOcclusionRadius IS cameraAmbientOcclusionRadius
+    cameraBloomThreshold IS cameraBloomThreshold
+    cameraFocus IS cameraFocus
+    jersey IS jersey
+    channel IS channel
+    contactMaterial IS contactMaterial
+    footContactMaterial IS footContactMaterial
+    fingerContactMaterial IS fingerContactMaterial
+    fingerRadius IS fingerRadius
+    fingerTorque IS fingerTorque
+    bodySlot IS bodySlot
+    headSlot IS headSlot
+    leftFootSlot IS leftFootSlot
+    rightFootSlot IS rightFootSlot
+    leftHandSlot IS leftHandSlot
+    rightHandSlot IS rightHandSlot
+  }
+}
