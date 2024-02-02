@@ -40,7 +40,7 @@ renderingDevicePerspectives: red_first_defender:CameraBottom;1;1;0;0
 renderingDevicePerspectives: red_first_defender:CameraTop;1;1;0;0
 renderingDevicePerspectives: red_gk:CameraBottom;1;1;0;0
 renderingDevicePerspectives: red_gk:CameraTop;1;1;0;0
-renderingDevicePerspectives: red_goalkeeper:CameraBottom;1;1;0;0
+renderingDevicePerspectives: red_goalkeeper:CameraBottom;1;1;0.0034642;0
 renderingDevicePerspectives: red_goalkeeper:CameraTop;1;1;0;0
 renderingDevicePerspectives: red_second_defender:CameraBottom;1;1;0;0
 renderingDevicePerspectives: red_second_defender:CameraTop;1;1;0;0
