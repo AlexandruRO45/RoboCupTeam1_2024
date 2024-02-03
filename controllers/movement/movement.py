@@ -1,8 +1,34 @@
+# Copyright 1996-2023 Cyberbotics Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""Example of Python controller for Nao robot.
+   This demonstrates how to access sensors and actuators"""
+
 from controller import Robot, Keyboard, Motion
 
 
 class Nao (Robot):
     PHALANX_MAX = 8
+
+    def __init__(self):
+        super(Nao, self).__init__()
+        self.loadMotionFiles()
+        self.findAndEnableDevices()
+        self.currentlyPlaying = False
+        # Initialize a flag to simulate ball detection
+        self.ball_detected = False
+        self.ball_in_kicking_range = False    
 
     # load motion files
     def loadMotionFiles(self):

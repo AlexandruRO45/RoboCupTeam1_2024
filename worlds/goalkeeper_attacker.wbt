@@ -1,0 +1,34 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "../protos/Field.proto"
+EXTERNPROTO "../protos/Robot_nao.proto"
+EXTERNPROTO "../protos/Soccer_bal_robocup.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation 0.11771638734387221 0.8692361472397958 -0.4801784798201847 0.5497576138609719
+  position -2.2121800962802407 1.4873441982292863 3.029783371952628
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+Field {
+}
+Soccer_bal_robocup {
+  translation 3.23 0 0.07
+}
+Robot_nao {
+  translation 2.24 0.02 0.334
+  name "attacker"
+  controller "movement"
+}
+Robot_nao {
+  translation 4.42 0 0.334
+  rotation 0 0 1 3.14159
+  name "Goalkeeper"
+  version "V5 (blue)"
+}
