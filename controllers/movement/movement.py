@@ -1,21 +1,8 @@
-# Copyright 1996-2023 Cyberbotics Ltd.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""Example of Python controller for Nao robot.
-   This demonstrates how to access sensors and actuators"""
-
 from controller import Robot, Keyboard, Motion
+import cv2
+import numpy as np
+import math
+import time
 
 
 class Nao (Robot):
@@ -41,6 +28,11 @@ class Nao (Robot):
         self.turnRight60 = Motion('../motions/TurnRight60.motion')
         self.taiChi = Motion('../motions/TaiChi.motion')
         self.wipeForhead = Motion('../motions/WipeForehead.motion')
+        self.kick = Motion('../motions/Kick.motion')
+        self.kick_right = Motion('../motions/KickRight.motion')
+        self.kick_left = Motion('../motions/KickLeft.motion')
+        self.stand = Motion('../motions/Stand.motion')  
+
 
     def startMotion(self, motion):
         # interrupt current motion
@@ -188,28 +180,6 @@ class Nao (Robot):
             if len(self.lphalanx) > i and self.lphalanx[i] is not None:
                 self.lphalanx[i].setPosition(clampedAngle)
 
-    def printHelp(self):
-        print('----------nao_demo_python----------')
-        print('Use the keyboard to control the robots (one at a time)')
-        print('(The 3D window need to be focused)')
-        print('[Up][Down]: move one step forward/backwards')
-        print('[<-][->]: side step left/right')
-        print('[Shift] + [<-][->]: turn left/right')
-        print('[U]: print ultrasound sensors')
-        print('[A]: print accelerometers')
-        print('[G]: print gyros')
-        print('[S]: print gps')
-        print('[I]: print inertial unit (roll/pitch/yaw)')
-        print('[F]: print foot sensors')
-        print('[B]: print foot bumpers')
-        print('[Home][End]: print scaled top/bottom camera image')
-        print('[PageUp][PageDown]: open/close hands')
-        print('[7][8][9]: change all leds RGB color')
-        print('[0]: turn all leds off')
-        print('[T]: perform Tai chi movements')
-        print('[W]: wipe its forehead')
-        print('[H]: print this help message')
-
     def findAndEnableDevices(self):
         # get the time step of the current world.
         self.timeStep = int(self.getBasicTimeStep())
@@ -293,6 +263,45 @@ class Nao (Robot):
         self.keyboard = self.getKeyboard()
         self.keyboard.enable(10 * self.timeStep)
 
+    def processCameraImage(self):
+        # Capture images from both cameras
+        imageTop = self.cameraTop.getImage()
+        imageBottom = self.cameraBottom.getImage()
+
+        # Convert Webots images to OpenCV format
+        widthTop, heightTop = self.cameraTop.getWidth(), self.cameraTop.getHeight()
+        imageTopCV = np.frombuffer(imageTop, np.uint8).reshape((heightTop, widthTop, 4))
+        imageBottomCV = np.frombuffer(imageBottom, np.uint8).reshape((self.cameraBottom.getHeight(), self.cameraBottom.getWidth(), 4))
+
+        # Convert BGRA to BGR, which OpenCV uses
+        imageTopCV = cv2.cvtColor(imageTopCV, cv2.COLOR_BGRA2BGR)
+        imageBottomCV = cv2.cvtColor(imageBottomCV, cv2.COLOR_BGRA2BGR)
+
+        # For demonstration, show the dimensions of the captured image
+        print("Top Camera Image Dimensions: ", imageTopCV.shape)
+        print("Bottom Camera Image Dimensions: ", imageBottomCV.shape)
+
+        # Store the processed images for later use (optional)
+        self.cameraTopImage = imageTopCV
+        self.cameraBottomImage = imageBottomCV
+
+    def is_fallen(self):
+        # Get the roll and pitch values from the inertial unit
+        roll, pitch, _ = self.inertialUnit.getRollPitchYaw()
+        
+        # Define thresholds for detecting a fall (in radians)
+        # These thresholds might need to be adjusted based on experimentation
+        roll_threshold = 1.0  # Approximately 57 degrees
+        pitch_threshold = 1.0  # Approximately 57 degrees
+        
+        # Check if the robot has fallen
+        if abs(roll) > roll_threshold or abs(pitch) > pitch_threshold:
+            return True
+        return False
+
+    def execute_motion(self):
+        self.motion.play()
+
     def __init__(self):
         Robot.__init__(self)
         self.currentlyPlaying = False
@@ -300,7 +309,6 @@ class Nao (Robot):
         # initialize stuff
         self.findAndEnableDevices()
         self.loadMotionFiles()
-        self.printHelp()
 
     def run(self):
         # self.startMotion(self.forwards)
@@ -314,6 +322,8 @@ class Nao (Robot):
             key = self.keyboard.getKey()
             if key > 0:
                 break
+            if self.is_fallen():
+                self.execute_motion()
         # self.startMotion(self.forwards)
         # x = 1000
         # while x > 0:
