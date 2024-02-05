@@ -19,19 +19,19 @@ class Nao (Robot):
 
     # load motion files
     def loadMotionFiles(self):
-        self.handWave = Motion('../motions/HandWave.motion')
-        self.forwards = Motion('../motions/Forwards50.motion')
-        self.backwards = Motion('../motions/Backwards.motion')
-        self.sideStepLeft = Motion('../motions/SideStepLeft.motion')
-        self.sideStepRight = Motion('../motions/SideStepRight.motion')
-        self.turnLeft60 = Motion('../motions/TurnLeft60.motion')
-        self.turnRight60 = Motion('../motions/TurnRight60.motion')
-        self.taiChi = Motion('../motions/TaiChi.motion')
-        self.wipeForhead = Motion('../motions/WipeForehead.motion')
-        self.kick = Motion('../motions/Kick.motion')
-        self.kick_right = Motion('../motions/KickRight.motion')
-        self.kick_left = Motion('../motions/KickLeft.motion')
-        self.stand = Motion('../motions/Stand.motion')  
+        self.handWave = Motion('motions/HandWave.motion')
+        self.forwards = Motion('motions/Forwards50.motion')
+        self.backwards = Motion('motions/Backwards.motion')
+        self.sideStepLeft = Motion('motions/SideStepLeft.motion')
+        self.sideStepRight = Motion('motions/SideStepRight.motion')
+        self.turnLeft60 = Motion('motions/TurnLeft60.motion')
+        self.turnRight60 = Motion('motions/TurnRight60.motion')
+        self.taiChi = Motion('motions/TaiChi.motion')
+        self.wipeForhead = Motion('motions/WipeForehead.motion')
+        self.kick = Motion('motions/Kick.motion')
+        self.kick_right = Motion('motions/KickRight.motion')
+        self.kick_left = Motion('motions/KickLeft.motion')
+        self.stand = Motion('motions/Stand.motion')  
 
 
     def startMotion(self, motion):
