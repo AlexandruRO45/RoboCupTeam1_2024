@@ -1,0 +1,6 @@
+/home/alex/Documents/RoboCupTeam1_2024/build/CMakeFiles/edit_cache.dir
+/home/alex/Documents/RoboCupTeam1_2024/build/CMakeFiles/rebuild_cache.dir
+/home/alex/Documents/RoboCupTeam1_2024/build/CMakeFiles/list_install_components.dir
+/home/alex/Documents/RoboCupTeam1_2024/build/CMakeFiles/install.dir
+/home/alex/Documents/RoboCupTeam1_2024/build/CMakeFiles/install/local.dir
+/home/alex/Documents/RoboCupTeam1_2024/build/CMakeFiles/install/strip.dir
