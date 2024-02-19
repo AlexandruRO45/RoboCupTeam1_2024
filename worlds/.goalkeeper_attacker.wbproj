@@ -6,11 +6,11 @@ minimizedPerspectives: 000000ff00000000fd0000000300000000000001ca0000039ffc02000
 maximizedDockId: -1
 centralWidgetVisible: 1
 orthographicViewHeight: 1
-textFiles: 0 "controllers/movement/movement.py"
+textFiles: 0 "../../RoboCupTeam1_2024/controllers/nao_lola_python/nao_lola_python.py"
 consoles: Console:All:All
 renderingDevicePerspectives: Attacker:CameraBottom;1;1;0;0.184175
 renderingDevicePerspectives: Attacker:CameraTop;1;1;0;0
-renderingDevicePerspectives: Goalkeeper:CameraBottom;1;0.269896;0.941472;0
+renderingDevicePerspectives: Goalkeeper:CameraBottom;1;0.269896;0.941167;0
 renderingDevicePerspectives: Goalkeeper:CameraTop;1;0.520833;0.878601;0
 renderingDevicePerspectives: NAO(1):CameraBottom;1;1;0;0.839685
 renderingDevicePerspectives: NAO(1):CameraTop;1;1;0;0.674112
