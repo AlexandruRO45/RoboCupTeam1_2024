@@ -37,6 +37,12 @@ devel_isolated/
 worlds/**/*.wbproj
 worlds/**/*.jpg
 
+# Ignore __pycache__ folder in controllers directory (and anywhere else)
+__pycache__/
+
+# Alternative (less recommended): Ignore all pyc files (everywhere)
+# *.pyc  # Uncomment this line if you prefer to ignore all .pyc files
+
 # Version control system temporary files
 *~
 
