@@ -8,10 +8,16 @@ EXTERNPROTO "../protos/NaoV6.proto"
 EXTERNPROTO "../protos/NaoJersey.proto"
 
 WorldInfo {
+  info [
+    "RoboCupTeam1_UofG_2024"
+  ]
+  title "RoboCupTeam1_UofG_2024"
+  optimalThreadCount 4
+  gpsCoordinateSystem "WGS84"
 }
 Viewpoint {
-  orientation 0.03720384982639502 -0.05669801226295303 -0.9976979547756549 5.119585452544708
-  position -3.199933131066634 -7.481209023400608 1.5076980844821641
+  orientation -0.03725040954613045 -0.02990798074154039 0.9988583081081167 4.493554635639139
+  position -0.3827117088622791 10.813323014810436 1.2891458223615715
 }
 Field {
   postRadius 0.02
@@ -35,14 +41,14 @@ Soccer_bal_robocup {
   translation 0 0 0.0697
 }
 NaoV6 {
-  translation 1.23 0 0.334
+  translation -4.1 0 0.334
   name "red_goalkeeper"
   jersey NaoJersey {
     jerseyColor 0.878431 0.105882 0.141176
   }
 }
 NaoV6 {
-  translation 1.8 0 0.334
+  translation -2.87 0 0.334
   name "red_defender"
   jersey NaoJersey {
     jerseyTexture [
@@ -52,7 +58,7 @@ NaoV6 {
   }
 }
 NaoV6 {
-  translation 1.97 -0.52 0.334
+  translation -3.09 -0.52 0.334
   name "red_sec_attacker"
   jersey NaoJersey {
     jerseyTexture [
@@ -62,7 +68,7 @@ NaoV6 {
   }
 }
 NaoV6 {
-  translation 2.25 0 0.334
+  translation -3.64 0 0.334
   name "red_main_attacker"
   jersey NaoJersey {
     jerseyTexture [
@@ -72,7 +78,7 @@ NaoV6 {
   }
 }
 NaoV6 {
-  translation -2.58 2.67 0.334
+  translation 0.29 2.67 0.334
   name "blue_goalkeeper"
   jersey NaoJersey {
     jerseyTexture [
@@ -82,7 +88,7 @@ NaoV6 {
   }
 }
 NaoV6 {
-  translation -2.43 0 0.334
+  translation 0.9 1.06 0.334
   name "blue_defender"
   jersey NaoJersey {
     jerseyTexture [
@@ -92,7 +98,7 @@ NaoV6 {
   }
 }
 NaoV6 {
-  translation -3.1 0 0.334
+  translation 0.94 1.79 0.334
   name "blue_sec_attacker"
   jersey NaoJersey {
     jerseyTexture [
@@ -102,7 +108,7 @@ NaoV6 {
   }
 }
 NaoV6 {
-  translation -1.63 0 0.334
+  translation 0.58 1.65 0.334
   name "blue_main_attacker"
   jersey NaoJersey {
     jerseyTexture [

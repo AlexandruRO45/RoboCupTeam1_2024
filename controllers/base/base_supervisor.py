@@ -53,16 +53,29 @@ class BaseSupervisor(Supervisor):
                 self.updateScoreboard()
                 self.resetSimulation()
                 break
-        # $PLACEHOLDER$
+            
+    def getBallPosition(self) -> list:
+        """
+        Retrieves the soccer ball's coordinates on the field.
+        """
+        newBallLocation = self.ball.getPosition()
+        if abs(newBallLocation[0]) < 4.5 and abs(newBallLocation[1]) < 4.5:
+            maxDifference = max([abs(a - b) for a, b in zip(newBallLocation, self.previousBallLocation)])
+            if maxDifference > 0.05:
+                self.ballPriority = "N"
+                self.previousBallLocation = newBallLocation
+        return newBallLocation
 
-    def getBallPosition(self):
-        # Get the current 3D coordinates (x, y, z) of the ball
-        
-        # $PLACEHOLDER$
+    def setBallPosition(self, ballPosition: list) -> None:
+        """
+        Sets the soccer ball's coordinates on the field.
 
-    def setBallPosition(self, position):
-        # Set the 3D coordinates of the ball (for simulation reset)
-        # $PLACEHOLDER$
+        Args:
+            ballPosition (list): The x, y, and z coordinates of the ball.
+        """
+        self.previousBallLocation = ballPosition
+        self.ball.getField("translation").setSFVec3f(ballPosition)
+        self.ball.resetPhysics()
 
     def getRobotPosition(self, robot_name):
         # Get the 3D coordinates of a specific robot by name
