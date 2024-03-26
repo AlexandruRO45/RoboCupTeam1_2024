@@ -10,8 +10,8 @@ EXTERNPROTO "../protos/NaoJersey.proto"
 WorldInfo {
 }
 Viewpoint {
-  orientation -0.15095046798510137 -0.18293604244365214 0.971467117606218 4.874924543804255
-  position -2.2596267855767604 5.516948933182031 1.814873476576629
+  orientation 0.03720384982639502 -0.05669801226295303 -0.9976979547756549 5.119585452544708
+  position -3.199933131066634 -7.481209023400608 1.5076980844821641
 }
 Field {
   postRadius 0.02
@@ -38,20 +38,38 @@ NaoV6 {
   translation 1.23 0 0.334
   name "red_goalkeeper"
   jersey NaoJersey {
-    jerseyColor 0.752941 0.109804 0.156863
+    jerseyColor 0.878431 0.105882 0.141176
   }
 }
 NaoV6 {
   translation 1.8 0 0.334
-  name "NAO(2)"
+  name "red_defender"
+  jersey NaoJersey {
+    jerseyTexture [
+      "../protos/textures/nao_jersey_dark_3.png"
+    ]
+    jerseyColor 0.878431 0.105882 0.141176
+  }
 }
 NaoV6 {
   translation 1.97 -0.52 0.334
-  name "NAO(3)"
+  name "red_sec_attacker"
+  jersey NaoJersey {
+    jerseyTexture [
+      "../protos/textures/nao_jersey_dark_2.png"
+    ]
+    jerseyColor 0.878431 0.105882 0.141176
+  }
 }
 NaoV6 {
-  translation -1.78 0 0.334
-  name "NAO(4)"
+  translation 2.25 0 0.334
+  name "red_main_attacker"
+  jersey NaoJersey {
+    jerseyTexture [
+      "../protos/textures/nao_jersey_dark_4.png"
+    ]
+    jerseyColor 0.878431 0.105882 0.141176
+  }
 }
 NaoV6 {
   translation -2.58 2.67 0.334
@@ -65,12 +83,31 @@ NaoV6 {
 }
 NaoV6 {
   translation -2.43 0 0.334
-  name "NAO(6)"
+  name "blue_defender"
+  jersey NaoJersey {
+    jerseyTexture [
+      "../protos/textures/nao_jersey_light_3.png"
+    ]
+    jerseyColor 0.207843 0.517647 0.894118
+  }
 }
 NaoV6 {
   translation -3.1 0 0.334
-  name "NAO(7)"
+  name "blue_sec_attacker"
+  jersey NaoJersey {
+    jerseyTexture [
+      "../protos/textures/nao_jersey_light_2.png"
+    ]
+    jerseyColor 0.207843 0.517647 0.894118
+  }
 }
 NaoV6 {
-  translation 2.35 0 0.334
+  translation -1.63 0 0.334
+  name "blue_main_attacker"
+  jersey NaoJersey {
+    jerseyTexture [
+      "../protos/textures/nao_jersey_light_4.png"
+    ]
+    jerseyColor 0.207843 0.517647 0.894118
+  }
 }
