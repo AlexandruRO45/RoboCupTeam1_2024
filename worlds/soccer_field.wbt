@@ -3,16 +3,17 @@
 EXTERNPROTO "../protos/Field.proto"
 EXTERNPROTO "../protos/Stadium_background.proto"
 EXTERNPROTO "../protos/Statium_background_light.proto"
+EXTERNPROTO "../protos/Soccer_bal_robocup.proto"
+EXTERNPROTO "../protos/NaoV6.proto"
+EXTERNPROTO "../protos/NaoJersey.proto"
 
 WorldInfo {
 }
 Viewpoint {
-  orientation 0.30812865353420504 0.19801920086565195 -0.9305079951079016 2.0637001300636957
-  position 6.0285783846807455 5.826170224856509 4.679861933158015
+  orientation -0.15095046798510137 -0.18293604244365214 0.971467117606218 4.874924543804255
+  position -2.2596267855767604 5.516948933182031 1.814873476576629
 }
 Field {
-  frame1Color 0.776471 0.27451 0
-  frame2Color 0.776471 0.27451 0
   postRadius 0.02
 }
 Stadium_background {
@@ -20,4 +21,56 @@ Stadium_background {
 }
 Statium_background_light {
   texture "stadium"
+}
+Robot {
+  children [
+    DEF EMITTER Emitter {
+    }
+  ]
+  name "supervisor"
+  controller "supervisor"
+  supervisor TRUE
+}
+Soccer_bal_robocup {
+  translation 0 0 0.0697
+}
+NaoV6 {
+  translation 1.23 0 0.334
+  name "red_goalkeeper"
+  jersey NaoJersey {
+    jerseyColor 0.752941 0.109804 0.156863
+  }
+}
+NaoV6 {
+  translation 1.8 0 0.334
+  name "NAO(2)"
+}
+NaoV6 {
+  translation 1.97 -0.52 0.334
+  name "NAO(3)"
+}
+NaoV6 {
+  translation -1.78 0 0.334
+  name "NAO(4)"
+}
+NaoV6 {
+  translation -2.58 2.67 0.334
+  name "blue_goalkeeper"
+  jersey NaoJersey {
+    jerseyTexture [
+      "../protos/textures/nao_jersey_light_1.png"
+    ]
+    jerseyColor 0.101961 0.372549 0.705882
+  }
+}
+NaoV6 {
+  translation -2.43 0 0.334
+  name "NAO(6)"
+}
+NaoV6 {
+  translation -3.1 0 0.334
+  name "NAO(7)"
+}
+NaoV6 {
+  translation 2.35 0 0.334
 }
