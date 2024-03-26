@@ -1,5 +1,6 @@
 import os
 import sys
+import math 
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -7,6 +8,8 @@ import time
 from controller import Supervisor
 
 class BaseSupervisor(Supervisor):
+    allowOutOfBounds = False
+
     RobotList = [
         # Team Red
         'red_goalkeeper', 
@@ -31,7 +34,7 @@ class BaseSupervisor(Supervisor):
         # Initialize variables
         self.latestGoalTime = 0
         self.ballPriority = 0
-        self.previousBallLocation = None
+        self.previousBallLocation = [0, 0, 0.0697]
         self.score = {'Team Red': 0, 'Team Blue': 0}
 
         # Create scoreboard labels
@@ -68,31 +71,88 @@ class BaseSupervisor(Supervisor):
 
     def setBallPosition(self, ballPosition: list) -> None:
         """
-        Sets the soccer ball's coordinates on the field.
+        Set the soccer ball's coordinates on the field.
 
         Args:
-            ballPosition (list): The x, y, and z coordinates of the ball.
+            ballPosition (list): The x, y, and z coordinates of the desired ball position.
+
+        Raises:
+            ValueError: If the ball position is outside the playable area and allowOutOfBounds is False.
         """
+        if not self.allowOutOfBounds:
+            x, y, z = ballPosition
+            if abs(x) >= 4.5 or abs(y) >= 0.7:
+                raise ValueError("Ball position is outside the playable area.")
+
         self.previousBallLocation = ballPosition
-        self.ball.getField("translation").setSFVec3f(ballPosition)
+        translation_field = self.ball.getField("translation")
+        translation_field.setSFVec3f(ballPosition)
         self.ball.resetPhysics()
 
-    def getRobotPosition(self, robot_name):
-        # Get the 3D coordinates of a specific robot by name
-        # $PLACEHOLDER$
+    def getRobotState(self, robotName: str) -> list:
+        """
+        Retrieves the state (position and orientation) of a specific robot on the field.
 
-    def getRobotOrientation(self, robot_name):
-        # Get the orientation of a specific robot by name
-        # $PLACEHOLDER$
+        Args:
+            robotName (str): The name of the robot to query.
+
+        Returns:
+            list: The robot's state represented as [x, y, z, roll, pitch, yaw].
+        """
+        robot = self.robots[robotName]
+        position = robot.getPosition()
+        orientation = robot.getOrientation()
+        state = position + orientation
+        return state
 
     def getBallOwner(self):
         # Calculate which team currently owns the ball based on robot distances
-        # $PLACEHOLDER$
+        ball_position = self.getBallPosition()
+        min_distance = float('inf')
+        ball_owner = None
 
-    def sendSupervisorData(self):
-        # Pack and send data (ball position, owner, priority, etc.) to robots via an emitter channel
-        # $PLACEHOLDER$
+        for robot_name in self.RobotList:
+            robot_state = self.getRobotState(robot_name)
+            robot_position = robot_state[:3]
+
+            # Calculate distance directly within the loop
+            delta_x = math.fabs(ball_position[0] - robot_position[0])
+            delta_y = math.fabs(ball_position[1] - robot_position[1])
+            distance = math.hypot(delta_x, delta_y)
+
+            if distance < min_distance:
+                min_distance = distance
+                ball_owner = robot_name
+
+        if ball_owner is not None:
+            return "*" + ball_owner[0]
+        else:
+            return None
 
     def resetSimulation(self):
-        # Reset the simulation and robot physics
-        # $PLACEHOLDER$
+        # Reset the ball and robots to their initial positions
+        self.simulationReset()
+        self.setBallPosition([0, 0, 0.0697])
+        for robot in self.robots:
+            robot.setPosition(robot.getField("initial_position").getSFVec3f())
+            robot.setOrientation(robot.getField("initial_orientation").getSFVec3f())
+            robot.resetPhysics()
+
+    def sendSupervisorData(self) -> None:
+        """Send Data (ballPosition, ballOwner, ballPriority, ...) to Robots. Channel is '0'."""
+
+        # Pack the values into a string to transmit
+        message = ",".join(
+            map(
+                str,
+                [
+                    self.getTime(),
+                    self.ballPriority,
+                    self.getBallOwner(),
+                    *self.getBallPosition(),
+                    *[state for robot_name in self.RobotList for state in self.getRobotState(robot_name)],  # Unpack robot state
+                ],
+            )
+        )
+
+        self.emitter.send(message.encode("utf-8"))
