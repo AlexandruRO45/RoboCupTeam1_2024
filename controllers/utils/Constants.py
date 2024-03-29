@@ -14,15 +14,15 @@ class MotionPath:
 
     def get_motion_file(self, motion_name):
         motion_file = os.path.join(self.motion_folder, motion_name)
-        if motion_file in self.motion_files:
+        if motion_name in self.motion_files:
             return motion_file
         else:
             raise ValueError("Motion file not found.")
 
-# Example usage
-motion_folder = "/path/to/plugins/motion"
-motion_path = MotionPath(motion_folder)
+# # Example usage
+# motion_folder = "../../plugins/motions/"
+# motion_path = MotionPath(motion_folder)
 
-# Get a specific motion file
-motion_file = motion_path.get_motion_file("walk.motion")
-print(motion_file)
+# # Get a specific motion file
+# motion_file = motion_path.get_motion_file("Backwards.motion")
+# print(motion_file)

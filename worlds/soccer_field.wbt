@@ -16,8 +16,8 @@ WorldInfo {
   gpsCoordinateSystem "WGS84"
 }
 Viewpoint {
-  orientation -0.03725040954613045 -0.02990798074154039 0.9988583081081167 4.493554635639139
-  position -0.3827117088622791 10.813323014810436 1.2891458223615715
+  orientation -0.1725487076724782 0.09114402492823247 0.9807750558616585 2.1856160478587903
+  position 4.730116105274828 -8.310049775606643 4.302829061423855
 }
 Field {
   postRadius 0.02
@@ -43,6 +43,7 @@ Soccer_bal_robocup {
 NaoV6 {
   translation -4.1 0 0.334
   name "red_goalkeeper"
+  controller "red_goalkeeper_controller"
   jersey NaoJersey {
     jerseyColor 0.878431 0.105882 0.141176
   }
@@ -50,6 +51,7 @@ NaoV6 {
 NaoV6 {
   translation -2.87 0 0.334
   name "red_defender"
+  controller "red_defender_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_dark_3.png"
@@ -60,6 +62,7 @@ NaoV6 {
 NaoV6 {
   translation -3.09 -0.52 0.334
   name "red_sec_attacker"
+  controller "red_sec_attacker_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_dark_2.png"
@@ -70,6 +73,7 @@ NaoV6 {
 NaoV6 {
   translation -3.64 0 0.334
   name "red_main_attacker"
+  controller "red_main_attacker_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_dark_4.png"
@@ -80,6 +84,7 @@ NaoV6 {
 NaoV6 {
   translation 0.29 2.67 0.334
   name "blue_goalkeeper"
+  controller "blue_goalkeeper_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_light_1.png"
@@ -90,6 +95,7 @@ NaoV6 {
 NaoV6 {
   translation 0.9 1.06 0.334
   name "blue_defender"
+  controller "blue_defender_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_light_3.png"
@@ -100,6 +106,7 @@ NaoV6 {
 NaoV6 {
   translation 0.94 1.79 0.334
   name "blue_sec_attacker"
+  controller "blue_sec_attacker_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_light_2.png"
@@ -110,6 +117,7 @@ NaoV6 {
 NaoV6 {
   translation 0.58 1.65 0.334
   name "blue_main_attacker"
+  controller "blue_main_attacker_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_light_4.png"
