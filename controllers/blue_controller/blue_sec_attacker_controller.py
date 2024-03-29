@@ -8,7 +8,16 @@ from controllers.models.attacker import Attacker
 from controllers.base_controller import BaseController
 
 
-class RedLeftAttackerController(BaseController):
+class SecondaryAttacker:
+    def __init__(self, robot):
+        self.robot = robot
+        # Add your secondary attacker initialization code here
+
+    def run(self):
+        # Add your secondary attacker logic here
+        pass
+
+class RedRightAttackerController(BaseController):
 
     def __init__(self):
         super().__init__(Attacker())
@@ -27,5 +36,5 @@ class RedLeftAttackerController(BaseController):
 
 
 if __name__ == '__main__':
-    controller = RedLeftAttackerController()
+    controller = RedRightAttackerController()
     controller.main()

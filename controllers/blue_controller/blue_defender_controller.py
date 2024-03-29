@@ -8,6 +8,15 @@ from controllers.models.defender import Defender
 from controllers.base_controller import BaseController
 
 
+class Defender:
+    def __init__(self, robot):
+        self.robot = robot
+        # Add your defender initialization code here
+
+    def run(self):
+        # Add your defender logic here
+        pass
+
 class RedDefenderController(BaseController):
 
     def __init__(self):
