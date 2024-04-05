@@ -1,0 +1,54 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "../protos/Field.proto"
+EXTERNPROTO "../protos/Stadium_background.proto"
+EXTERNPROTO "../protos/Statium_background_light.proto"
+EXTERNPROTO "../protos/Soccer_bal_robocup.proto"
+EXTERNPROTO "../protos/NaoV6.proto"
+EXTERNPROTO "../protos/NaoJersey.proto"
+
+WorldInfo {
+  info [
+    "RoboCupTeam1_UofG_2024"
+  ]
+  title "RoboCupTeam1_UofG_2024"
+  optimalThreadCount 4
+  gpsCoordinateSystem "WGS84"
+}
+Viewpoint {
+  orientation -0.19687379794231552 -0.09853140261598127 0.9754651559037338 4.04993459475295
+  position 6.3145710667743415 7.95079592632389 3.556448008835684
+}
+Field {
+  postRadius 0.02
+}
+Stadium_background {
+  texture "stadium"
+}
+Statium_background_light {
+  texture "stadium"
+}
+Robot {
+  children [
+    DEF EMITTER Emitter {
+    }
+  ]
+  name "supervisor"
+  controller "supervisor"
+  supervisor TRUE
+}
+Soccer_bal_robocup {
+  translation 0 0 0.0697
+}
+NaoV6 {
+  translation 3.16 -0.01 0.334
+  rotation 0 0 1 3.14159
+  name "blue_main_attacker"
+  controller "blue_controller"
+  jersey NaoJersey {
+    jerseyTexture [
+      "../protos/textures/nao_jersey_light_4.png"
+    ]
+    jerseyColor 0.207843 0.517647 0.894118
+  }
+}

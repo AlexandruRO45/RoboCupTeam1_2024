@@ -1,1 +1,59 @@
-plugins/sdformat_urdf
+# Build artifacts
+build/
+bin/
+lib/
+
+# Logs and temporary files
+logs/
+
+# IDE and build tool specific files
+.project
+.cproject
+CMakeLists.txt.user
+qtcreator-*
+*.user
+
+# Generated files
+*.dox
+*.wikidoc
+*.cfgc
+/cfg/*
+*.pyc
+*.wbproj
+
+# ROS specific
+devel/
+msg_gen/
+srv_gen/
+msg/*Action*  # All message action files
+msg/*Feedback* # All message feedback files
+msg/*Goal*     # All message goal files
+msg/*Result*   # All message result files
+msg/_*.py
+build_isolated/
+devel_isolated/
+
+# Ignore wbproj and jpg files under worlds directory
+worlds/**/*.wbproj
+worlds/**/*.jpg
+
+# Ignore __pycache__ folder in controllers directory (and anywhere else)
+__pycache__/
+
+# Alternative (less recommended): Ignore all pyc files (everywhere)
+# *.pyc  # Uncomment this line if you prefer to ignore all .pyc files
+
+# Version control system temporary files
+*~
+
+# Editor temporary files
+.emacs
+
+# Catkin specific
+CATKIN_IGNORE
+
+# Specific files
+output_image.jpg
+
+# Ignore planning directory (optional, adjust path as needed)
+/planning/
