@@ -1,3 +1,12 @@
+"""  TO DO:
+- Implement the BaseController class that will be inherited by all other controllers
+- Set up the motion files for each controller (all motion folder)
+- Set data to the emitter in the BaseController class (optional)
+- Initiate all sensors
+- Implement the run method for each controller
+- Follow the ball and detection routines
+- Locate the ball and receive the goal post location from the supervisor
+"""
 from controllers.models.nao_robot import NaoRobot
 
 class BaseController:
