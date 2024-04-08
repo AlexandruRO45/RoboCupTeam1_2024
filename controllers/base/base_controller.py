@@ -5,7 +5,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath
 
 from controller import Keyboard, Motion
 from controllers.models.nao_robot import NaoRobot
-from utils.motion import MotionPath, MotionBase
+from controllers.utils.motion import MotionPath, MotionBase
 
 class BaseController:
     """Base controller class for robot control."""
