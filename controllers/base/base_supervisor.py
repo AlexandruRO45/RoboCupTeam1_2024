@@ -1,11 +1,12 @@
 import os
 import sys
-import math 
+import math
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
-import time
 from controller import Supervisor
+from models.nao_robot import NaoRobot
+from base import base_controller 
 
 class BaseSupervisor(Supervisor):
     allowOutOfBounds = False
@@ -200,14 +201,11 @@ class BaseSupervisor(Supervisor):
                         print(f"Warning: Robot {robot_name} seems inactive for {timeout_threshold} seconds")
                     last_robot_states[robot_name] = state
 
-            # Introduce logging system (placeholder for future implementation)
-            # ... (code to implement logging for events and errors)
+            # Call controller's run method
+            print("Calling BaseController.run()...")
+            base_controller.BaseController.run()
 
-            # Dynamic difficulty adjustment (placeholder for future implementation)
-            # ... (code to analyze score and adjust difficulty parameters)
-
-            # Integration with external visualization tools (placeholder for future implementation)
-            # ... (code to interact with extAernal visualization tools)
-
-
-
+if __name__ == "__main__":
+    # Initialize the supervisor
+    supervisor = BaseSupervisor()
+    supervisor.run()
