@@ -5,7 +5,7 @@ from abc import abstractmethod
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
 from controllers.models.attacker import Attacker
-from controllers.base_controller import BaseController
+from controllers.base.base_controller import BaseController
 
 
 class RedLeftAttackerController(BaseController):

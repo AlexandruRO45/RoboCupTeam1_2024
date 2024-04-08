@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
 from controllers.models.goalkeeper_supervisor import GoalKeeperSupervisor
-from controllers.base_controller import BaseController
+from controllers.base.base_controller import BaseController
 
 
 # Define the controller classes: Goalkeeper, Defender, MainAttacker, SecondaryAttacker
