@@ -28,23 +28,14 @@ Stadium_background {
 Statium_background_light {
   texture "stadium"
 }
-Robot {
-  children [
-    DEF EMITTER Emitter {
-    }
-  ]
-  name "supervisor"
-  controller "supervisor"
-  supervisor TRUE
-}
 Soccer_bal_robocup {
   translation 0 0 0.0697
 }
 NaoV6 {
-  translation 3.16 -0.01 0.334
+  translation 0.92 -0.00999397 0.314
   rotation 0 0 1 3.14159
   name "blue_main_attacker"
-  controller "blue_controller"
+  controller "attacker_opponent"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_light_4.png"
