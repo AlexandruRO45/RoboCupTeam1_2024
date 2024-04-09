@@ -53,8 +53,8 @@ class NaoRobot(Robot):
         self.turnRight40 = Motion("../../plugins/motions/TurnRight40.motion")
         self.turnRight60 = Motion("../../plugins/motions/TurnRight60.motion")
         self.standInit = Motion("../../plugins/motions/StandInit.motion")
-        self.taiChi = Motion('../../plugins/motions/TaiChi.motion')
-        self.wipeForhead = Motion('../../plugins/motions/WipeForehead.motion')
+        # self.taiChi = Motion('../../plugins/motions/TaiChi.motion')
+        # self.wipeForhead = Motion('../../plugins/motions/WipeForehead.motion')
 
     def startMotion(self, motion):
         # interrupt current motion

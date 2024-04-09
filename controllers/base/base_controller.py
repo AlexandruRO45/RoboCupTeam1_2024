@@ -132,8 +132,8 @@ class BaseController:
             elif self._state == 'executing_order':
                 self.take_order()
 
-if __name__ == "__main__":
-    # Assuming NaoRobot is initialized and passed correctly
-    nao_robot = NaoRobot()  # This line is placeholder and needs actual robot initialization
-    controller = BaseController(nao_robot)
-    controller.run()
+# if __name__ == "__main__":
+#     # Assuming NaoRobot is initialized and passed correctly
+#     nao_robot = NaoRobot()  # This line is placeholder and needs actual robot initialization
+#     controller = BaseController(nao_robot)
+#     controller.run()
