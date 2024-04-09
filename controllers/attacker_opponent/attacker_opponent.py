@@ -159,6 +159,8 @@ class NaoRobot:
         # Initialize left and right motors
         self.left_motor = self.robot.getDevice('LAnklePitch')
         self.right_motor = self.robot.getDevice('RAnklePitch')
+        self.RShoulderPitch = self.robot.getDevice("RShoulderPitch")
+        self.LShoulderPitch = self.robot.getDevice("LShoulderPitch")
 
         # Check if motor devices were successfully initialized
         if self.left_motor is None or self.right_motor is None:
@@ -242,6 +244,12 @@ class NaoRobot:
         elif self.detect_fall() == self.stand_up_back:
             stand_up_back_motion.play()
 
+    def stabilize(self):
+        # Set angles to lower the hands
+        for i in range(0, 10):
+            self.RShoulderPitch.setPosition(2)  # Adjust angles as needed
+            self.LShoulderPitch.setPosition(2)  # Adjust angles as needed
+
     def run(self):
         while self.robot.step(self.time_step) != -1:
             ball_position = self.detector.detect_soccer_ball()
@@ -260,7 +268,7 @@ class NaoRobot:
                 print("Direction to Goal Post:", goal_direction)
                 
                 # Perform stabilization before initiating any movement
-                # self.stabilize()
+                self.stabilize()
                 
                 # Navigate to the goal post
                 self.navigate_to_goal_post((ball_position_x, ball_position_y), goal_position)
