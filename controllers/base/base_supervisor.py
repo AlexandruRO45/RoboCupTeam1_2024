@@ -211,7 +211,14 @@ class BaseSupervisor(Supervisor):
             filename (str): The name of the CSV file to write to.
             game_state (dict): The game state dictionary to write.
         """
-        with open(filename, 'a', newline='') as csvfile:
+        # Get the path to the libraries directory
+        libraries_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'libraries')
+
+        # Create the path to the new location of the CSV file
+        new_csv_path = os.path.join(libraries_dir, filename)
+
+        # Write the game state to the new CSV file
+        with open(new_csv_path, 'a', newline='') as csvfile:
             csvwriter = csv.writer(csvfile)
             csvwriter.writerow(game_state.values())
 
