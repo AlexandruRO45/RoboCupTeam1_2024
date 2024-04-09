@@ -1,11 +1,16 @@
-from controller import Robot
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+
+from controllers.models.nao_robot import NaoRobot
 from blue_goalkeeper_controller import Goalkeeper
 from blue_defender_controller import Defender
 from blue_main_attacker_controller import MainAttacker
 from blue_sec_attacker_controller import SecondaryAttacker
 
 # Create the Robot instance.
-robot = Robot()
+robot = NaoRobot()
 # Get the Robot Name to find the role.
 robot_name = robot.getName()
 

@@ -3,17 +3,34 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
-from controllers.models.goalkeeper_supervisor import GoalKeeperSupervisor
 from controllers.base.base_controller import BaseController
 
 
-# Define the controller classes: Goalkeeper, Defender, MainAttacker, SecondaryAttacker
-class Goalkeeper:
+class Goalkeeper(BaseController):
+
     def __init__(self, robot):
         self.robot = robot
-        # Add your goalkeeper initialization code here
+        print("Goalkeeper created")
 
     def run(self):
-        # Add your goalkeeper logic here
+        # Add your secondary attacker logic here
         pass
+    
+    
+    
+    # def __init__(self):
+    #     super().__init__(Goalkeeper())
+    #     self.robot = Goalkeeper()
 
+
+
+
+    # def run(self):
+    #     super().main()
+
+    #     while not self.can_see_the_ball():
+    #         self.find_the_ball()
+
+    #     self.update_the_supervisor_with_the_ball_location()
+
+    #     self.take_order()

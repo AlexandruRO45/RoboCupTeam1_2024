@@ -4,28 +4,31 @@ from abc import abstractmethod
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
-from controllers.models.attacker import Attacker
 from controllers.base.base_controller import BaseController
 
 
-class RedLeftAttackerController(BaseController):
+class MainAttacker(BaseController):
 
-    def __init__(self):
-        super().__init__(Attacker())
-        self.robot = Attacker()
+    def __init__(self, robot):
+        self.robot = robot
+        print("MainAttacker created")
+        
+    def run(self):
+        pass
 
-    @abstractmethod
-    def main(self):
-        super().main()
+# class MainAttacker(BaseController):
 
-        while not self.can_see_the_ball():
-            self.find_the_ball()
+#     def __init__(self):
+#         super().__init__(Attacker())
+#         self.robot = Attacker()
 
-        self.update_the_supervisor_with_the_ball_location()
+#     @abstractmethod
+#     def main(self):
+#         super().main()
 
-        self.take_order()
+#         while not self.can_see_the_ball():
+#             self.find_the_ball()
 
+#         self.update_the_supervisor_with_the_ball_location()
 
-if __name__ == '__main__':
-    controller = RedLeftAttackerController()
-    controller.main()
+#         self.take_order()
