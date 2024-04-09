@@ -28,7 +28,7 @@ Stadium_background {
 Statium_background_light {
   texture "stadium"
 }
-Robot {
+DEF SUPERVISOR Robot {
   children [
     DEF EMITTER Emitter {
     }
@@ -37,10 +37,10 @@ Robot {
   controller "supervisor"
   supervisor TRUE
 }
-Soccer_bal_robocup {
+DEF SOCCER_BALL Soccer_bal_robocup {
   translation 0 0 0.0697
 }
-NaoV6 {
+DEF red_goalkeeper NaoV6 {
   translation -4.01 0 0.334
   name "red_goalkeeper"
   controller "red_controller"
@@ -48,7 +48,7 @@ NaoV6 {
     jerseyColor 0.878431 0.105882 0.141176
   }
 }
-NaoV6 {
+DEF red_defender NaoV6 {
   translation -3.28 0 0.334
   name "red_defender"
   controller "red_controller"
@@ -59,7 +59,7 @@ NaoV6 {
     jerseyColor 0.878431 0.105882 0.141176
   }
 }
-NaoV6 {
+DEF red_sec_attacker NaoV6 {
   translation -3.61 -0.52 0.334
   name "red_sec_attacker"
   controller "red_controller"
@@ -70,7 +70,7 @@ NaoV6 {
     jerseyColor 0.878431 0.105882 0.141176
   }
 }
-NaoV6 {
+DEF red_main_attacker NaoV6 {
   translation -3.64 0.66 0.334
   name "red_main_attacker"
   controller "red_controller"
@@ -81,7 +81,7 @@ NaoV6 {
     jerseyColor 0.878431 0.105882 0.141176
   }
 }
-NaoV6 {
+DEF blue_goalkeeper NaoV6 {
   translation 4.37 -0.02 0.334
   rotation 0 0 1 3.14159
   name "blue_goalkeeper"
@@ -93,7 +93,7 @@ NaoV6 {
     jerseyColor 0.101961 0.372549 0.705882
   }
 }
-NaoV6 {
+DEF blue_defender NaoV6 {
   translation 3.53 -0.57 0.334
   rotation 0 0 1 3.14159
   name "blue_defender"
@@ -105,7 +105,7 @@ NaoV6 {
     jerseyColor 0.207843 0.517647 0.894118
   }
 }
-NaoV6 {
+DEF blue_sec_attacker NaoV6 {
   translation 3.43 0.79 0.334
   rotation 0 0 1 3.14159
   name "blue_sec_attacker"
@@ -117,7 +117,7 @@ NaoV6 {
     jerseyColor 0.207843 0.517647 0.894118
   }
 }
-NaoV6 {
+DEF blue_main_attacker NaoV6 {
   translation 3.16 -0.01 0.334
   rotation 0 0 1 3.14159
   name "blue_main_attacker"
