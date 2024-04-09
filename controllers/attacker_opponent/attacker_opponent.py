@@ -1,4 +1,6 @@
 from controller import Robot, Motion
+from collections import defaultdict
+import time
 import cv2
 import numpy as np
 import math
@@ -6,6 +8,9 @@ import math
 class NaoSoccerBallDetector:
     def __init__(self, robot):
         self.robot = robot
+        self.prev_ball_x = None  # Store previous ball x-coordinate
+        self.track_history = defaultdict(lambda: []) # Store the track history
+        self.track = [] # Store the track
         self.time_step = int(robot.getBasicTimeStep())
         self.camera_bottom = robot.getDevice("CameraBottom")
         self.camera_bottom.enable(self.time_step)
@@ -19,14 +24,14 @@ class NaoSoccerBallDetector:
         self.accelerometer.enable(4 * self.time_step)
 
     def detect_soccer_ball(self):
-        # Get the image from the bottom cameraro
+        # Get the image from the bottom camera
         image_bottom = self.camera_bottom.getImage()
         if not image_bottom:
             return None
 
         # Convert image to numpy array
         image_bottom = np.frombuffer(image_bottom, np.uint8).reshape((self.height_bottom, self.width_bottom, 4))
-        
+
         # Convert image from RGBA to RGB
         image_bottom = cv2.cvtColor(image_bottom, cv2.COLOR_RGBA2RGB)
 
@@ -48,17 +53,32 @@ class NaoSoccerBallDetector:
         if contours_black and contours_white:
             largest_contour_black = max(contours_black, key=cv2.contourArea)
             largest_contour_white = max(contours_white, key=cv2.contourArea)
+
             moments_black = cv2.moments(largest_contour_black)
             moments_white = cv2.moments(largest_contour_white)
+
             if moments_black["m00"] != 0 and moments_white["m00"] != 0:
                 ball_position_x = int(moments_black["m10"] / moments_black["m00"])
                 ball_position_y = int(moments_black["m01"] / moments_black["m00"])
+
                 # Look down if the ball is near the robot's feet
                 if ball_position_y > 0.8 * self.height_bottom:
                     self.look_down()
+
                 goal_post_position_x = int(moments_white["m10"] / moments_white["m00"])
                 goal_post_position_y = int(moments_white["m01"] / moments_white["m00"])
+
+                # Implement ball trajectory tracking
+                if self.prev_ball_x is not None:
+                    if ball_position_x < self.prev_ball_x:
+                        print("Left")
+                    else:
+                        print("Right")
+
+                self.prev_ball_x = ball_position_x  # Update previous ball x-coordinate
+
                 return ball_position_x, ball_position_y, goal_post_position_x, goal_post_position_y
+
         return None
 
     def detect_other_robot(self):
@@ -217,7 +237,10 @@ class NaoRobot:
         # Load stand-up motion file
         stand_up_front_motion = Motion('../../plugins/motions/StandUpFromFront.motion')
         stand_up_back_motion = Motion('../../plugins/motions/StandUpFromBack.motion')
-        stand_up_motion.play()
+        if self.detect_fall() == self.stand_up_front:
+            stand_up_front_motion.play()
+        elif self.detect_fall() == self.stand_up_back:
+            stand_up_back_motion.play()
 
     def run(self):
         while self.robot.step(self.time_step) != -1:
