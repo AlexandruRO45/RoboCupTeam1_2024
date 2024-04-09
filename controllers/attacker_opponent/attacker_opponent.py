@@ -152,6 +152,10 @@ class NaoRobot:
         self.detector = NaoSoccerBallDetector(self.robot)
         self.time_step = int(self.robot.getBasicTimeStep())
 
+        # Initialize accelerometer
+        self.accelerometer = self.robot.getDevice("accelerometer")
+        self.accelerometer.enable(4 * self.time_step)
+
         # Initialize motion and forward motion file
         self.motion = self.robot.getDevice('WEBOTS_MOTION')
         self.forwards = Motion('../../plugins/motions/Forwards50.motion')
@@ -235,15 +239,100 @@ class NaoRobot:
         self.kick_motion = Motion('../../plugins/motions/Shoot.motion')
         self.kick_motion.play()
 
-    def stand_up_(self):
-        # Load stand-up motion file
-        stand_up_front_motion = Motion('../../plugins/motions/StandUpFromFront.motion')
-        stand_up_back_motion = Motion('../../plugins/motions/StandUpFromBack.motion')
-        if self.detect_fall() == self.stand_up_front:
-            stand_up_front_motion.play()
-        elif self.detect_fall() == self.stand_up_back:
-            stand_up_back_motion.play()
+    # def stand_up_(self):
+    #     # Load stand-up motion file
+    #     stand_up_front_motion = Motion('../../plugins/motions/StandUpFromFront.motion')
+    #     stand_up_back_motion = Motion('../../plugins/motions/StandUpFromBack.motion')
+    #     if self.detect_fall() == self.stand_up_front:
+    #         stand_up_front_motion.play()
+    #     elif self.detect_fall() == self.stand_up_back:
+    #         stand_up_back_motion.play()
 
+    def stand_up_(self):
+        """
+        Attempts to stand up the robot based on the fall direction.
+
+        This function assumes the robot can detect its fall using an accelerometer 
+        (implementation not provided) and assigns fall direction based on 
+        accelerometer readings (provided in the original code).
+
+        Needs appropriate motion files (e.g., StandUpFromFront.motion) loaded 
+        before playing them. 
+        """
+
+        stand_up_motion = None  # Initialize stand_up_motion variable
+
+        # Determine fall direction based on accelerometer readings (provided in original code)
+        fall_direction = self.detect_fall()
+
+        # Select appropriate stand-up motion based on fall direction
+        if fall_direction == self.stand_up_front:
+            stand_up_motion = Motion('../../plugins/motions/StandUpFromFront.motion')
+        elif fall_direction == self.stand_up_back:
+            stand_up_motion = Motion('../../plugins/motions/StandUpFromBack.motion')
+
+        # Play the stand-up motion if a valid direction is detected
+        if stand_up_motion:
+            stand_up_motion.play()
+
+    def detect_fall(self):
+        """
+        Detects falls based on accelerometer readings.
+
+        This is a basic implementation that checks for significant acceleration 
+        in a specific direction (e.g., forward or backward tilt) to indicate 
+        a potential fall.
+
+        In practice, fall detection can be more complex and might require 
+        additional sensors or algorithms.
+        """
+
+        # Get accelerometer values
+        acc = self.accelerometer.getValues(self.time_step)  # Include time_step argument
+
+        # Thresholds for fall detection (adjust based on robot calibration)
+        fall_threshold = 5.0  # Acceleration threshold
+        forward_fall_limit = -0.7  # Minimum Z-axis value for forward fall
+        backward_fall_limit = 0.7  # Maximum Z-axis value for backward fall
+
+        # Detect forward fall
+        if (
+            math.fabs(acc[0]) > math.fabs(acc[1])
+            and math.fabs(acc[0]) > math.fabs(acc[2])
+            and acc[0] < -fall_threshold
+            and acc[2] < forward_fall_limit
+        ):
+            return self.stand_up_front  # Indicate front fall
+
+        # Detect backward fall
+        elif (
+            math.fabs(acc[0]) > math.fabs(acc[1])
+            and math.fabs(acc[0]) > math.fabs(acc[2])
+            and acc[0] > fall_threshold
+            and acc[2] > backward_fall_limit
+        ):
+            return self.stand_up_back  # Indicate back fall
+
+        # No fall detected
+        else:
+            return None
+
+    # def detect_fall(self):
+    #     # Get accelerometer values
+    #     acc = self.accelerometer.getValues()
+    #     if (
+    #         math.fabs(acc[0]) > math.fabs(acc[1])
+    #         and math.fabs(acc[0]) > math.fabs(acc[2])
+    #         and acc[0] < -5
+    #     ):
+    #         return self.stand_up_front
+    #     elif (
+    #         math.fabs(acc[0]) > math.fabs(acc[1])
+    #         and math.fabs(acc[0]) > math.fabs(acc[2])
+    #         and acc[2] > 0
+    #     ):
+    #         return self.stand_up_back
+        
     def stabilize(self):
         # Set angles to lower the hands
         for i in range(0, 10):
@@ -297,24 +386,6 @@ class NaoRobot:
             goal_post_position = self.detector.detect_goal_post()
             if goal_post_position:
                 print("Black Goal Post Detected:", goal_post_position)
-                
-    def detect_fall(self):
-        # Get accelerometer values
-        acc = self.accelerometer.getValues()
-        if (
-            math.fabs(acc[0]) > math.fabs(acc[1])
-            and math.fabs(acc[0]) > math.fabs(acc[2])
-            and acc[0] < -5
-        ):
-            return self.stand_up_front
-        elif (
-            math.fabs(acc[0]) > math.fabs(acc[1])
-            and math.fabs(acc[0]) > math.fabs(acc[2])
-            and acc[2] > 0
-        ):
-            return self.stand_up_back
-
-        
 
 if __name__ == "__main__":
     nao_robot = NaoRobot()
