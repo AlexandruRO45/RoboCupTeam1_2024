@@ -29,7 +29,7 @@ Soccer_bal_robocup {
   translation 0 0 0.0697
 }
 NaoV6 {
-  translation 0.92 -0.00999397 0.324
+  translation 0.37 -0.00999234 0.344
   rotation 0 0 1 3.14159
   name "blue_main_attacker"
   controller "attacker_opponent"
