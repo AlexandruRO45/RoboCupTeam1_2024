@@ -1,11 +1,11 @@
 #VRML_SIM R2023b utf8
 
-EXTERNPROTO "../protos/Field.proto"
 EXTERNPROTO "../protos/Stadium_background.proto"
 EXTERNPROTO "../protos/Statium_background_light.proto"
 EXTERNPROTO "../protos/Soccer_bal_robocup.proto"
 EXTERNPROTO "../protos/NaoV6.proto"
 EXTERNPROTO "../protos/NaoJersey.proto"
+EXTERNPROTO "../protos/SPL_Field.proto"
 
 WorldInfo {
   info [
@@ -16,11 +16,8 @@ WorldInfo {
   gpsCoordinateSystem "WGS84"
 }
 Viewpoint {
-  orientation -0.19687379794231552 -0.09853140261598127 0.9754651559037338 4.04993459475295
-  position 6.3145710667743415 7.95079592632389 3.556448008835684
-}
-Field {
-  postRadius 0.02
+  orientation -0.201647334828553 -0.10345483574031093 0.973979183205928 4.068419322428978
+  position 3.078223637213164 2.996501752491784 1.7131255317208367
 }
 Stadium_background {
   texture "stadium"
@@ -32,7 +29,7 @@ Soccer_bal_robocup {
   translation 0 0 0.0697
 }
 NaoV6 {
-  translation 0.92 -0.00999397 0.314
+  translation 0.92 -0.00999397 0.324
   rotation 0 0 1 3.14159
   name "blue_main_attacker"
   controller "attacker_opponent"
@@ -42,4 +39,8 @@ NaoV6 {
     ]
     jerseyColor 0.207843 0.517647 0.894118
   }
+}
+SPL_Field {
+  frame1Color 0.109804 0.443137 0.847059
+  frame2Color 0.109804 0.443137 0.847059
 }
