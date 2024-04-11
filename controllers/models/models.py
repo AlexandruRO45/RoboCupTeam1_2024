@@ -1,99 +1,76 @@
-import threading
-import queue
-from collections import namedtuple
+# Import required libraries
+from controller import Robot
+from collections import defaultdict
 import cv2
 import numpy as np
-from controller import Robot, Camera
+from ultralytics import YOLO
 
-class FrameBuffer:
-    """ Class to represent a buffer for storing and accessing image frames. """
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.buffer = queue.Queue(maxsize=3)
-
-    def put_frame(self, frame):
-        """ Pushes an image frame to the buffer if space is available. """
-        if frame.shape[:2] != (self.height, self.width):
-            raise ValueError(f"Invalid frame size. Expected: {(self.height, self.width)}, Got: {frame.shape[:2]}")
-        self.buffer.put(frame)
-
-    def get_frame(self, timeout=0.1):
-        """ Retrieves an image frame from the buffer if available within the timeout. Raises an exception if no frame is available. """
-        try:
-            return self.buffer.get(timeout=timeout)
-        except queue.Empty:
-            raise TimeoutError("No frame available in the buffer")
-
-class ImageStreamer(threading.Thread):
-    """ Thread-based class for capturing images from a camera and storing them in a frame buffer. """
-    def __init__(self, camera_device, frame_buffer, timestep):
-        super().__init__(daemon=True)
-        self.camera = camera_device
-        # self.robot = robot
-        # self.camera = self.robot.getDevice('CameraTop')
-        # self.camera.enable(33)  # Enable the camera with a 33ms timestep
-        self.frame_buffer = frame_buffer
-        self.timestep = timestep
-        self.running = True
-        self.prev_ball_x = None  # Store previous ball x-coordinate
-
-    def run(self):
-        self.camera.enable(self.timestep)
-        while self.running:
-            frame = self.camera.getImageArray()
-            if frame is not None:
-                # Ball detection logic (e.g., color-based segmentation)
-                hsv = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2HSV)
-                lower_color = np.array([29, 86, 6])
-                upper_color = np.array([64, 255, 255])
-                mask = cv2.inRange(hsv, lower_color, upper_color)
-                contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-                if contours:
-                    # Find the largest contour (assuming it's the ball)
-                    largest_contour = max(contours, key=cv2.contourArea)
-
-                    # Calculate ball center
-                    M = cv2.moments(largest_contour)
-                    if M["m00"] != 0:
-                        ball_x = int(M["m10"] / M["m00"])
-                        ball_y = int(M["m01"] / M["m00"])
-
-                        # Draw vertical line at center
-                        height, width, _ = np.array(frame).shape
-                        cv2.line(frame, (width // 2, 0), (width // 2, height), (0, 255, 0), 2)
-
-                        # Determine ball direction
-                        if self.prev_ball_x is not None:
-                            if ball_x < self.prev_ball_x:
-                                print("Left")
-                            else:
-                                print("Right")
-
-                        self.prev_ball_x = ball_x  # Update previous ball x-coordinate
-
-                self.frame_buffer.put_frame(np.array(frame))
-
-    def stop(self):
-        self.running = False
-        self.camera.disable()
-
-# Example usage
+# Initialize the robot
 robot = Robot()
-frame_buffer = FrameBuffer(width=640, height=480)
-streamer = ImageStreamer(robot, frame_buffer)
-streamer.start()
+timestep = int(robot.getBasicTimeStep())
 
-# Simulate processing frames from the buffer in a loop
-while robot.step(33) != -1:
-    try:
-        frame = frame_buffer.get_frame()
-        cv2.imshow("Image Stream", frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+# Enable camera
+camera = robot.getDevice('CameraTop')
+camera.enable(timestep)
+
+def main():
+    # Track object history
+    obj_history = defaultdict(lambda: [])
+    
+    # Initialize YOLO model
+    model = YOLO(r"../utils/best.pt")
+
+    while robot.step(timestep) != -1:
+        # Capture image from the camera
+        image = camera.getImage()
+        width, height = camera.getWidth(), camera.getHeight()
+        
+        # Convert the image to RGB format
+        image = np.frombuffer(image, np.uint8).reshape((height, width, 4))
+        frame = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        
+        # Perform object detection and tracking
+        results = model.predict(frame, device='cuda', classes=[0, 1, 2, 3], conf=0.5)
+        results1 = model.track(frame, persist=True, device='cuda', tracker='bytetrack.yaml', classes=[0], conf=0.5)
+
+        # Extract boxes, names, and track IDs
+        boxes = results1[0].boxes.xywh.cpu().tolist()
+        names = results1[0].names
+        try:
+            track_ids = results1[0].boxes.id.cpu().tolist()
+        except Exception as e:
+            track_ids = None
+        clss = results1[0].boxes.cls.cpu().tolist()
+
+        # Visualize the results on the frame
+        annotated_frame = results[0].plot()
+
+        # Plot the object tracks
+        if track_ids:
+            for box, track_id in zip(boxes, track_ids):
+                x, y, w, h = box
+                obj_track = obj_history[track_id]
+                obj_track.append((float(x), float(y)))  # x, y center point
+                if len(obj_track) > 30:  # Retain 30 tracks
+                    obj_track.pop(0)
+
+                # Draw the object tracking lines
+                if obj_track:
+                    points = np.hstack(obj_track).astype(np.int32).reshape((-1, 1, 2))
+                    cv2.polylines(annotated_frame, [points], isClosed=False, color=(230, 230, 230), thickness=10)
+                else:
+                    continue
+
+        # Display the annotated frame
+        cv2.namedWindow('Object Tracking', cv2.WINDOW_NORMAL)
+        cv2.resizeWindow('Object Tracking', 400, 300)
+        cv2.imshow("Object Tracking", annotated_frame)
+
+        # Break the loop if 'q' is pressed
+        if cv2.waitKey(1) & 0xFF == ord("q"):
             break
-    except TimeoutError:
-        print("No frame available to process.")
 
-streamer.stop()
-cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()

@@ -1,4 +1,13 @@
 import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+
+from controller import Motion
+class MotionBase(Motion):
+  def __init__(self, name, path):
+    super().__init__(path)
+    self.name = name
 
 class MotionPath:
     def __init__(self, motion_folder):

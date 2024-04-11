@@ -4,31 +4,39 @@ from abc import abstractmethod
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
-from controllers.models.defender import Defender
-from controllers.base_controller import BaseController
+from controllers.base.base_controller import BaseController
 
 
-class RedDefenderController(BaseController):
+class Defender(BaseController):
 
-    def __init__(self):
-        super().__init__(Defender())
-        self.robot = Defender()
+    def __init__(self, robot):
+        self.robot = robot
+        print("Defender created")
+        
+    def run(self):
+        pass
 
-    @abstractmethod
-    def main(self):
-        super().main()
+# class RedDefenderController(BaseController):
 
-        while not self.can_see_the_ball():
-            self.find_the_ball()
+#     def __init__(self):
+#         super().__init__(Defender())
+#         self.robot = Defender()
 
-        self.update_the_supervisor_with_the_ball_location()
+#     @abstractmethod
+#     def main(self):
+#         super().main()
 
-        self.take_order()
+#         while not self.can_see_the_ball():
+#             self.find_the_ball()
+
+#         self.update_the_supervisor_with_the_ball_location()
+
+#         self.take_order()
 
 
-if __name__ == '__main__':
-    controller = RedDefenderController()
-    controller.main()
+# if __name__ == '__main__':
+#     controller = RedDefenderController()
+#     controller.main()
 
 """
 V3 

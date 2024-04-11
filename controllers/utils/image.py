@@ -58,24 +58,24 @@ class ImageStreamer(threading.Thread):
         self.running = False
 
 
-# Example usage
-# Modify capture device and frame buffer parameters as needed
-capture_device = cv2.VideoCapture(0)  # Assuming camera index 0
-frame_buffer = FrameBuffer(width=640, height=480)
+# # Example usage
+# # Modify capture device and frame buffer parameters as needed
+# capture_device = cv2.VideoCapture(0)  # Assuming camera index 0
+# frame_buffer = FrameBuffer(width=640, height=480)
 
-streamer = ImageStreamer(capture_device, frame_buffer)
-streamer.start()
+# streamer = ImageStreamer(capture_device, frame_buffer)
+# streamer.start()
 
-# Simulate processing frames from the buffer in a loop
-for _ in range(5):
-    try:
-        frame = frame_buffer.get_frame()
-        # Process frame (e.g., using OpenCV)
-        cv2.imshow("Image Stream", frame)
-        cv2.waitKey(1)
-    except TimeoutError:
-        print("No frame available to process.")
+# # Simulate processing frames from the buffer in a loop
+# for _ in range(5):
+#     try:
+#         frame = frame_buffer.get_frame()
+#         # Process frame (e.g., using OpenCV)
+#         cv2.imshow("Image Stream", frame)
+#         cv2.waitKey(1)
+#     except TimeoutError:
+#         print("No frame available to process.")
 
-streamer.stop()
-capture_device.release()
-cv2.destroyAllWindows()
+# streamer.stop()
+# capture_device.release()
+# cv2.destroyAllWindows()

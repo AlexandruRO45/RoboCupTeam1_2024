@@ -69,18 +69,18 @@ class Robot:
         return force * direction / distance
 
 
-# Example usage:
-robot_position =  # get the robot position
-ball_position =  # get the ball position
-obstacle_positions =  # get the obstacle position
-other_player_positions =  # get the other player positions
-pathfinder = PotentialFieldPathfinding(robot_position, goal_position, obstacle_positions, other_player_positions)
-final_position = pathfinder.find_path()
-print("Final robot position:", final_position)
+# # Example usage:
+# robot_position =  # get the robot position
+# ball_position =  # get the ball position
+# obstacle_positions =  # get the obstacle position
+# other_player_positions =  # get the other player positions
+# pathfinder = PotentialFieldPathfinding(robot_position, goal_position, obstacle_positions, other_player_positions)
+# final_position = pathfinder.find_path()
+# print("Final robot position:", final_position)
 
-# After reaching the ball position, robot kicks the ball towards the goal
-robot = Robot(final_position)
-ball_position =  # get the ball position
-kick_force = 2.0  # set kick force accordingly
-kick_direction = robot.kick_ball(ball_position, kick_force)
-print("Kick direction:", kick_direction)
+# # After reaching the ball position, robot kicks the ball towards the goal
+# robot = Robot(final_position)
+# ball_position =  # get the ball position
+# kick_force = 2.0  # set kick force accordingly
+# kick_direction = robot.kick_ball(ball_position, kick_force)
+# print("Kick direction:", kick_direction)

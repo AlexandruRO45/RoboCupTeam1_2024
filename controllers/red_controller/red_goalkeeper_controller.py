@@ -4,31 +4,37 @@ from abc import abstractmethod
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
-from controllers.models.goalkeeper_supervisor import GoalKeeperSupervisor
-from controllers.base_controller import BaseController
+from controllers.base.base_controller import BaseController
 
 
-class RedGoalkeeperController(BaseController):
+class Goalkeeper(BaseController):
 
-    def __init__(self):
-        super().__init__(GoalKeeperSupervisor())
-        self.robot = GoalKeeperSupervisor()
+    def __init__(self, robot):
+        self.robot = robot
+        print("Goalkeeper created")
+        
+    def run(self):
+        pass
 
-    @abstractmethod
-    def main(self):
-        super().main()
+# class Goalkeeper(BaseController):
 
-        while not self.can_see_the_ball():
-            self.find_the_ball()
+#     def __init__(self):
+#         super().__init__(GoalKeeperSupervisor())
+#         self.robot = GoalKeeperSupervisor()
 
-        self.update_the_supervisor_with_the_ball_location()
+#     @abstractmethod
+#     def main(self):
+#         super().main()
 
-        self.take_order()
+#         while not self.can_see_the_ball():
+#             self.find_the_ball()
+
+#         self.update_the_supervisor_with_the_ball_location()
+
+#         self.take_order()
 
 
-if __name__ == '__main__':
-    controllers = RedGoalkeeperController()
-    controllers.main()
+
 
 """
 V1

@@ -1,13 +1,18 @@
-from controller import Robot
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
+
+from controllers.models.nao_robot import NaoRobot
 from red_goalkeeper_controller import Goalkeeper
 from red_defender_controller import Defender
 from red_main_attacker_controller import MainAttacker
 from red_sec_attacker_controller import SecondaryAttacker
 
 # Create the Robot instance.
-robot = Robot()
+robot = NaoRobot()
 # Get the Robot Name to find the role.
-robotName = robot.getName()
+robot_name = robot.getName()
 
 # Dictionary mapping robot names to controller classes
 robot_controllers = {
@@ -18,13 +23,13 @@ robot_controllers = {
 }
 
 # Get the corresponding controller class based on robot name
-robot_controller_class = robot_controllers.get(robotName)
+robot_controller_class = robot_controllers.get(robot_name)
 
 # Check if a matching controller class is found
 if robot_controller_class:
     # Create the robot controller instance
-    robotController = robot_controller_class(robot)
+    robot_controller = robot_controller_class(robot)
     # Run the robot controller
-    robotController.run()
+    robot_controller.run()
 else:
-    print(f"Unknown robot name: {robotName} for the red team!")
+    print(f"Unknown robot name: {robot_name} for the red team!")

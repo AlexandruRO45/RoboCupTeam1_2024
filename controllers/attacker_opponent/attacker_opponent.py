@@ -1,11 +1,18 @@
 from controller import Robot, Motion
+from collections import defaultdict
+import time
 import cv2
 import numpy as np
 import math
+from collections import deque
+import matplotlib.pyplot as plt
 
 class NaoSoccerBallDetector:
     def __init__(self, robot):
         self.robot = robot
+        self.prev_ball_x = None  # Store previous ball x-coordinate
+        self.track_history = defaultdict(lambda: []) # Store the track history
+        self.track = [] # Store the track
         self.time_step = int(robot.getBasicTimeStep())
         self.camera_bottom = robot.getDevice("CameraBottom")
         self.camera_bottom.enable(self.time_step)
@@ -17,16 +24,30 @@ class NaoSoccerBallDetector:
         self.height_top = self.camera_top.getHeight()
         self.accelerometer = robot.getDevice("accelerometer")
         self.accelerometer.enable(4 * self.time_step)
+        self.left_motor = self.robot.getDevice('LAnklePitch')
+        self.right_motor = self.robot.getDevice('RAnklePitch')
+        self.kp_linear = 0.1  # Proportional control gain for linear velocity
+        self.kp_angular = 0.1  # Proportional control gain for angular velocity
+        self.log_file = "robot_log.txt"
+
+    def calculate_angular_velocity(self, angle):
+        return self.kp_angular * angle
+
+    def turn(self, angular_velocity):
+        left_velocity = -angular_velocity
+        right_velocity = angular_velocity
+        self.left_motor.setVelocity(left_velocity)
+        self.right_motor.setVelocity(right_velocity)
 
     def detect_soccer_ball(self):
-        # Get the image from the bottom cameraro
+        # Get the image from the bottom camera
         image_bottom = self.camera_bottom.getImage()
         if not image_bottom:
             return None
 
         # Convert image to numpy array
         image_bottom = np.frombuffer(image_bottom, np.uint8).reshape((self.height_bottom, self.width_bottom, 4))
-        
+
         # Convert image from RGBA to RGB
         image_bottom = cv2.cvtColor(image_bottom, cv2.COLOR_RGBA2RGB)
 
@@ -48,17 +69,45 @@ class NaoSoccerBallDetector:
         if contours_black and contours_white:
             largest_contour_black = max(contours_black, key=cv2.contourArea)
             largest_contour_white = max(contours_white, key=cv2.contourArea)
+
             moments_black = cv2.moments(largest_contour_black)
             moments_white = cv2.moments(largest_contour_white)
+
             if moments_black["m00"] != 0 and moments_white["m00"] != 0:
                 ball_position_x = int(moments_black["m10"] / moments_black["m00"])
                 ball_position_y = int(moments_black["m01"] / moments_black["m00"])
+
+                # Keep the ball centered in the frame
+                center_x = self.width_bottom // 2
+                error_x = ball_position_x - center_x
+                self.turn(self.calculate_angular_velocity(error_x))
+
                 # Look down if the ball is near the robot's feet
                 if ball_position_y > 0.8 * self.height_bottom:
                     self.look_down()
+
+                # Look up if the ball is near the robot's head
+                if ball_position_y < 0.2 * self.height_bottom:
+                    self.look_up()
+
                 goal_post_position_x = int(moments_white["m10"] / moments_white["m00"])
                 goal_post_position_y = int(moments_white["m01"] / moments_white["m00"])
+                with open(self.log_file, "a") as log_file:
+                    # Implement ball trajectory tracking
+                    if self.prev_ball_x is not None:
+                        if ball_position_x < self.prev_ball_x:
+                            print("Left")
+                            log_file.write("Left\n")
+                            self.track_history[ball_position_x].append("Left")
+                        elif ball_position_x > self.prev_ball_x:
+                            print("Right")
+                            log_file.write("Right\n")
+                            self.track_history[ball_position_x].append("Right")
+
+                self.prev_ball_x = ball_position_x  # Update previous ball x-coordinate
+
                 return ball_position_x, ball_position_y, goal_post_position_x, goal_post_position_y
+
         return None
 
     def detect_other_robot(self):
@@ -93,6 +142,9 @@ class NaoSoccerBallDetector:
 
     def look_down(self):
         self.robot.getDevice("HeadPitch").setPosition(0.5)  # Adjust the value to control the head pitch
+
+    def look_up(self):
+        self.robot.getDevice("HeadPitch").setPosition(-0.5)  # Adjust the value to control the head pitch
 
     def detect_goal_post(self):
         # Get the image from the bottom camera
@@ -131,6 +183,13 @@ class NaoRobot:
         self.robot = Robot()
         self.detector = NaoSoccerBallDetector(self.robot)
         self.time_step = int(self.robot.getBasicTimeStep())
+        self.log_file = "robot_log.txt"
+        self.plot_history = deque(maxlen=100)
+        self.track_history = deque(maxlen=100)  # Store the track history
+
+        # Initialize accelerometer
+        self.accelerometer = self.robot.getDevice("accelerometer")
+        self.accelerometer.enable(4 * self.time_step)
 
         # Initialize motion and forward motion file
         self.motion = self.robot.getDevice('WEBOTS_MOTION')
@@ -139,6 +198,8 @@ class NaoRobot:
         # Initialize left and right motors
         self.left_motor = self.robot.getDevice('LAnklePitch')
         self.right_motor = self.robot.getDevice('RAnklePitch')
+        self.RShoulderPitch = self.robot.getDevice("RShoulderPitch")
+        self.LShoulderPitch = self.robot.getDevice("LShoulderPitch")
 
         # Check if motor devices were successfully initialized
         if self.left_motor is None or self.right_motor is None:
@@ -214,18 +275,89 @@ class NaoRobot:
         self.kick_motion.play()
 
     def stand_up_(self):
-        # Load stand-up motion file
-        stand_up_front_motion = Motion('../../plugins/motions/StandUpFromFront.motion')
-        stand_up_back_motion = Motion('../../plugins/motions/StandUpFromBack.motion')
-        stand_up_motion.play()
+
+        stand_up_motion = None  # Initialize stand_up_motion variable
+
+        # Determine fall direction based on accelerometer readings (provided in original code)
+        fall_direction = self.detect_fall()
+
+        # Select appropriate stand-up motion based on fall direction
+        if fall_direction == self.stand_up_front:
+            stand_up_motion = Motion('../../plugins/motions/StandUpFromFront.motion')
+        elif fall_direction == self.stand_up_back:
+            stand_up_motion = Motion('../../plugins/motions/StandUpFromBack.motion')
+
+        # Play the stand-up motion if a valid direction is detected
+        if stand_up_motion:
+            stand_up_motion.play()
+
+    def detect_fall(self):
+        # Get accelerometer values
+        acc = self.accelerometer.getValues(self.time_step)  # Include time_step argument
+
+        # Thresholds for fall detection (adjust based on robot calibration)
+        fall_threshold = 5.0  # Acceleration threshold
+        forward_fall_limit = -0.7  # Minimum Z-axis value for forward fall
+        backward_fall_limit = 0.7  # Maximum Z-axis value for backward fall
+
+        # Detect forward fall
+        if (
+            math.fabs(acc[0]) > math.fabs(acc[1])
+            and math.fabs(acc[0]) > math.fabs(acc[2])
+            and acc[0] < -fall_threshold
+            and acc[2] < forward_fall_limit
+        ):
+            return self.stand_up_front  # Indicate front fall
+
+        # Detect backward fall
+        elif (
+            math.fabs(acc[0]) > math.fabs(acc[1])
+            and math.fabs(acc[0]) > math.fabs(acc[2])
+            and acc[0] > fall_threshold
+            and acc[2] > backward_fall_limit
+        ):
+            return self.stand_up_back  # Indicate back fall
+
+        # No fall detected
+        else:
+            return None
+        
+    def stabilize(self):
+        # Set angles to lower the hands
+        for i in range(0, 10):
+            self.RShoulderPitch.setPosition(2)  # Adjust angles as needed
+            self.LShoulderPitch.setPosition(2)  # Adjust angles as needed
+
+    def keep_ball_centered(self):
+        ball_position = self.detector.detect_soccer_ball()
+        if ball_position:
+            ball_position_x, ball_position_y, goal_post_position_x, goal_post_position_y = ball_position
+            self.navigate_to_goal_post((ball_position_x, ball_position_y), self.target_position)
+            self.plot_history.append((ball_position_x, ball_position_y, goal_post_position_x, goal_post_position_y))
+            self.log_ball_and_goal_post_positions(ball_position_x, ball_position_y, goal_post_position_x, goal_post_position_y)
+
+    def log_ball_and_goal_post_positions(self, ball_x, ball_y, goal_post_x, goal_post_y):
+        # Calculate the distance and direction to the goal post
+        goal_distance = math.sqrt((goal_post_x - ball_x) ** 2 + (goal_post_y - ball_y) ** 2)
+        goal_direction = math.atan2(goal_post_y - ball_y, goal_post_x - ball_x)
+
+        with open(self.log_file, "a") as log_file:
+            log_file.write(f"Ball Position: ({ball_x}, {ball_y})\n")
+            log_file.write(f"Goal Post Position: ({goal_post_x}, {goal_post_y})\n")
+            log_file.write(f"Distance to Goal Post: {goal_distance}\n")
+            log_file.write(f"Direction to Goal Post: {goal_direction}\n")
+            log_file.write("---\n")
 
     def run(self):
         while self.robot.step(self.time_step) != -1:
+            self.keep_ball_centered()
             ball_position = self.detector.detect_soccer_ball()
             goal_position = (5, 5, 5)  # Assuming the goal post's position is fixed
             
             if ball_position:
                 ball_position_x, ball_position_y, goal_post_position_x, goal_post_position_y = ball_position
+                self.track_history.append((ball_position_x, ball_position_y))
+                self.plot_history.append((ball_position_x, ball_position_y, goal_post_position_x, goal_post_position_y))
                 print("Attacker Detected Soccer Ball Position:", (ball_position_x, ball_position_y))
                 print("Detected Goal Post Position:", (goal_post_position_x, goal_post_position_y))
                 
@@ -237,7 +369,7 @@ class NaoRobot:
                 print("Direction to Goal Post:", goal_direction)
                 
                 # Perform stabilization before initiating any movement
-                # self.stabilize()
+                self.stabilize()
                 
                 # Navigate to the goal post
                 self.navigate_to_goal_post((ball_position_x, ball_position_y), goal_position)
@@ -260,30 +392,11 @@ class NaoRobot:
                 print("Another robot detected. Navigating towards it.")
                 other_robot_position = (5, 5, 5)  # Assuming the other robot's position
                 #self.navigate_to_other_robot((ball_position_x, ball_position_y), other_robot_position)
-
                
             # Detect black goal post
             goal_post_position = self.detector.detect_goal_post()
             if goal_post_position:
-                print("Black Goal Post Detected:", goal_post_position)
-                
-    def detect_fall(self):
-        # Get accelerometer values
-        acc = self.accelerometer.getValues()
-        if (
-            math.fabs(acc[0]) > math.fabs(acc[1])
-            and math.fabs(acc[0]) > math.fabs(acc[2])
-            and acc[0] < -5
-        ):
-            return self.stand_up_front
-        elif (
-            math.fabs(acc[0]) > math.fabs(acc[1])
-            and math.fabs(acc[0]) > math.fabs(acc[2])
-            and acc[2] > 0
-        ):
-            return self.stand_up_back
-
-        
+                print("Black Goal Post Detected:", goal_post_position) 
 
 if __name__ == "__main__":
     nao_robot = NaoRobot()

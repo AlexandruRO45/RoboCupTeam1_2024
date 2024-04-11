@@ -16,8 +16,8 @@ WorldInfo {
   gpsCoordinateSystem "WGS84"
 }
 Viewpoint {
-  orientation -0.13864813502702794 0.027524349717993835 0.9899591430085024 2.7535068849781563
-  position 10.12992322593289 -1.9772333369641024 2.6209195683394446
+  orientation -0.04884169044600005 0.9793705496578391 0.19608114579754807 0.49816870323677837
+  position -7.128950728558147 -3.164222059195403 3.661418076301073
 }
 Field {
   postRadius 0.02
@@ -28,7 +28,7 @@ Stadium_background {
 Statium_background_light {
   texture "stadium"
 }
-Robot {
+DEF SUPERVISOR Robot {
   children [
     DEF EMITTER Emitter {
     }
@@ -37,21 +37,21 @@ Robot {
   controller "supervisor"
   supervisor TRUE
 }
-Soccer_bal_robocup {
+DEF SOCCER_BALL Soccer_bal_robocup {
   translation 0 0 0.0697
 }
-NaoV6 {
+DEF red_goalkeeper NaoV6 {
   translation -4.01 0 0.334
   name "red_goalkeeper"
-  controller "red_goalkeeper_controller"
+  controller "red_controller"
   jersey NaoJersey {
     jerseyColor 0.878431 0.105882 0.141176
   }
 }
-NaoV6 {
+DEF red_defender NaoV6 {
   translation -3.28 0 0.334
   name "red_defender"
-  controller "red_defender_controller"
+  controller "red_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_dark_3.png"
@@ -59,10 +59,10 @@ NaoV6 {
     jerseyColor 0.878431 0.105882 0.141176
   }
 }
-NaoV6 {
+DEF red_sec_attacker NaoV6 {
   translation -3.61 -0.52 0.334
   name "red_sec_attacker"
-  controller "red_sec_attacker_controller"
+  controller "red_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_dark_2.png"
@@ -70,10 +70,10 @@ NaoV6 {
     jerseyColor 0.878431 0.105882 0.141176
   }
 }
-NaoV6 {
+DEF red_main_attacker NaoV6 {
   translation -3.64 0.66 0.334
   name "red_main_attacker"
-  controller "red_main_attacker_controller"
+  controller "red_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_dark_4.png"
@@ -81,11 +81,11 @@ NaoV6 {
     jerseyColor 0.878431 0.105882 0.141176
   }
 }
-NaoV6 {
+DEF blue_goalkeeper NaoV6 {
   translation 4.37 -0.02 0.334
   rotation 0 0 1 3.14159
   name "blue_goalkeeper"
-  controller "blue_goalkeeper_controller"
+  controller "blue_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_light_1.png"
@@ -93,11 +93,11 @@ NaoV6 {
     jerseyColor 0.101961 0.372549 0.705882
   }
 }
-NaoV6 {
+DEF blue_defender NaoV6 {
   translation 3.53 -0.57 0.334
   rotation 0 0 1 3.14159
   name "blue_defender"
-  controller "blue_defender_controller"
+  controller "blue_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_light_3.png"
@@ -105,11 +105,11 @@ NaoV6 {
     jerseyColor 0.207843 0.517647 0.894118
   }
 }
-NaoV6 {
+DEF blue_sec_attacker NaoV6 {
   translation 3.43 0.79 0.334
   rotation 0 0 1 3.14159
   name "blue_sec_attacker"
-  controller "blue_sec_attacker_controller"
+  controller "blue_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_light_2.png"
@@ -117,11 +117,11 @@ NaoV6 {
     jerseyColor 0.207843 0.517647 0.894118
   }
 }
-NaoV6 {
+DEF blue_main_attacker NaoV6 {
   translation 3.16 -0.01 0.334
   rotation 0 0 1 3.14159
   name "blue_main_attacker"
-  controller "blue_main_attacker_controller"
+  controller "blue_controller"
   jersey NaoJersey {
     jerseyTexture [
       "../protos/textures/nao_jersey_light_4.png"
