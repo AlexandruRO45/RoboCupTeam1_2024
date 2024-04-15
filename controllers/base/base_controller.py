@@ -50,7 +50,7 @@ class BaseController:
         self.d_rep = 1.0  # Repulsion distance threshold
         self.max_force = 1.0  # Maximum force magnitude
         self.robot_position = BaseSupervisor.getBallOwner() #needs to be called the supervisor
-        self.goal_position = BaseSupervisor.goal_post_position() #needs to be updated from the supervisor but I have manually declared the position to avoid confuion
+        self.goal_position = self.goal_post_position #needs to be updated from the supervisor but I have manually declared the position to avoid confuion
         self.obstacle_positions = BaseSupervisor.get_all_robot_states() #needs to be called the supervisor
         self.other_player_positions = BaseSupervisor.get_all_robot_states() #needs to be called the supervisor
 
@@ -119,12 +119,12 @@ class BaseController:
         print("Moving ball towards goal post...")
         ball_position = self._robot.getBallPosition()
         
-        if ball_position and goal_post_position:
+        if ball_position and self.goal_post_position:
             # Find the nearest robot to the ball
             nearest_robot = None
             min_distance = float('inf')
             for robot_name in self.RobotList:
-                robot_position = self.base_supervisor.getRobotState(robot_name)[:3]
+                robot_position = self.BaseSupervisor.getRobotState(robot_name)[:3]
                 distance = ((ball_position[0] - robot_position[0]) ** 2 +
                             (ball_position[1] - robot_position[1]) ** 2) ** 0.5
                 if distance < min_distance:
@@ -133,7 +133,7 @@ class BaseController:
 
             # Command the nearest robot to move the ball towards the goal post
             if nearest_robot:
-                self._robot.moveToGoalPost(nearest_robot, goal_post_position)
+                self._robot.moveToGoalPost(nearest_robot, self.goal_post_position)
 
 
     def attractive_force(self):
