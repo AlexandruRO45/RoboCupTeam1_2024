@@ -1,8 +1,11 @@
 import os
 import sys
+import numpy as np
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
 from controller import Keyboard, Motion
+from controllers.base.base_supervisor import BaseSupervisor
 from controllers.models.nao_robot import NaoRobot
 from controllers.utils.motion import MotionPath, MotionBase
 
@@ -41,15 +44,15 @@ class BaseController:
         self._receiver.enable(self._timestep)
         self._emitter = self._robot.getEmitter("emitter")
         self._state = 'searching'
-        self.BaseSupervisor = base_supervisor.BaseSupervisor() #this line doesn't work.. I tried but couldn't fix it
+        self.BaseSupervisor = BaseSupervisor() #this line doesn't work.. I tried but couldn't fix it
         self.k_att = 0.5  # Attractive force coefficient
         self.k_rep = 2.0  # Repulsive force coefficient
         self.d_rep = 1.0  # Repulsion distance threshold
         self.max_force = 1.0  # Maximum force magnitude
-        self.robot_position = getBallOwner() #needs to be called the supervisor
-        self.goal_position = goal_post_position #needs to be updated from the supervisor but I have manually declared the position to avoid confuion
-        self.obstacle_positions = get_all_robot_states() #needs to be called the supervisor
-        self.other_player_positions = get_all_robot_states() #needs to be called the supervisor
+        self.robot_position = BaseSupervisor.getBallOwner() #needs to be called the supervisor
+        self.goal_position = BaseSupervisor.goal_post_position() #needs to be updated from the supervisor but I have manually declared the position to avoid confuion
+        self.obstacle_positions = BaseSupervisor.get_all_robot_states() #needs to be called the supervisor
+        self.other_player_positions = BaseSupervisor.get_all_robot_states() #needs to be called the supervisor
 
         # Assign motion files to attributes
         self.handWave = Motion("../../plugins/motions/HandWave.motion")
