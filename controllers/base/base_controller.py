@@ -3,9 +3,8 @@ import sys
 import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-
-from controller import Keyboard, Motion
 from controllers.base.base_supervisor import BaseSupervisor
+from controller import Keyboard, Motion
 from controllers.models.nao_robot import NaoRobot
 from controllers.utils.motion import MotionPath, MotionBase
 
@@ -44,15 +43,19 @@ class BaseController:
         self._receiver.enable(self._timestep)
         self._emitter = self._robot.getEmitter("emitter")
         self._state = 'searching'
-        self.BaseSupervisor = BaseSupervisor() #this line doesn't work.. I tried but couldn't fix it
+        #self.BaseSupervisor = base_supervisor.BaseSupervisor() #this line doesn't work.. I tried but couldn't fix it
+        self.BaseSupervisor = BaseSupervisor() 
         self.k_att = 0.5  # Attractive force coefficient
         self.k_rep = 2.0  # Repulsive force coefficient
         self.d_rep = 1.0  # Repulsion distance threshold
         self.max_force = 1.0  # Maximum force magnitude
-        self.robot_position = BaseSupervisor.getBallOwner() #needs to be called the supervisor
+        #self.robot_position = BaseSupervisor.getBallOwner() 
+        self.robot_position = self.getBallOwner() #needs to be called the supervisor
         self.goal_position = self.goal_post_position #needs to be updated from the supervisor but I have manually declared the position to avoid confuion
-        self.obstacle_positions = BaseSupervisor.get_all_robot_states() #needs to be called the supervisor
-        self.other_player_positions = BaseSupervisor.get_all_robot_states() #needs to be called the supervisor
+        #self.obstacle_positions = BaseSupervisor.get_all_robot_states() #needs to be called the supervisor
+        #self.other_player_positions = BaseSupervisor.get_all_robot_states() 
+        self.obstacle_positions = self.get_all_robot_states() #needs to be called the supervisor
+        self.other_player_positions = self.get_all_robot_states() #needs to be called the supervisor
 
         # Assign motion files to attributes
         self.handWave = Motion("../../plugins/motions/HandWave.motion")
@@ -113,6 +116,29 @@ class BaseController:
                 message = f"ball:{ball_position[0]},{ball_position[1]},{ball_position[2]}"
                 self._emitter.send(message.encode('utf-8'))
     
+    def moveToGoalPost(self, robot_name, goal_post_position):
+        """Move the robot towards the goal post and dribble the ball."""
+        print(f"Dribbling the ball towards goal post and avoiding obstacles with {robot_name}...")
+        ball_position = self._robot.getBallPosition()
+        if ball_position and goal_post_position:
+            # Update the robot's position using the APF algorithm
+            self.apf()
+            # Calculate direction towards the goal post
+            direction_to_goal = np.array(goal_post_position) - self.robot_position
+            # Calculate the angle between the robot's current orientation and the direction to the goal
+            angle_to_goal = np.arctan2(direction_to_goal[1], direction_to_goal[0])
+            # Choose the appropriate motion file based on the angle to the goal
+            if -np.pi / 4 < angle_to_goal < np.pi / 4:
+                motion_file = self.forwards
+            elif np.pi / 4 <= angle_to_goal < 3 * np.pi / 4:
+                motion_file = self.rightSidePass
+            elif -3 * np.pi / 4 < angle_to_goal <= -np.pi / 4:
+                motion_file = self.leftSidePass
+            else:
+                motion_file = self.backwards
+            # Play the selected motion file to move the robot towards the goal post
+            motion_file.play()
+
 
     def move_ball_to_goal_post(self):
         """Move the ball towards the goal post using the nearest robot."""
@@ -124,7 +150,7 @@ class BaseController:
             nearest_robot = None
             min_distance = float('inf')
             for robot_name in self.RobotList:
-                robot_position = self.BaseSupervisor.getRobotState(robot_name)[:3]
+                robot_position = self.base_supervisor.getRobotState(robot_name)[:3]
                 distance = ((ball_position[0] - robot_position[0]) ** 2 +
                             (ball_position[1] - robot_position[1]) ** 2) ** 0.5
                 if distance < min_distance:
@@ -133,21 +159,8 @@ class BaseController:
 
             # Command the nearest robot to move the ball towards the goal post
             if nearest_robot:
-                self._robot.moveToGoalPost(nearest_robot, self.goal_post_position)
+                self.moveToGoalPost(nearest_robot, self.goal_post_position)
 
-    def moveToGoalPost(self, robot_name, goal_post_position):
-        """Move the robot towards the goal post."""
-        print(f"Moving {robot_name} towards the goal post...")
-        robot_position = self.BaseSupervisor.getRobotState(robot_name)[:3]
-        direction = goal_post_position - robot_position
-        distance = np.linalg.norm(direction)
-        if distance > 0:
-            # Normalize the direction vector
-            direction /= distance
-            # Calculate the target position
-            target_position = robot_position + direction * 0.5
-            # Move the robot towards the target position
-            self._robot.moveTo(target_position[0], target_position[1], target_position[2])
 
     def attractive_force(self):
         # Compute attractive force towards the goal
@@ -190,16 +203,25 @@ class BaseController:
             if np.linalg.norm(self.robot_position - prev_position) < tolerance:
                 break
         return self.robot_position
-    def move_ball_to_goal_post_apf(self):
+    
+    def apf(self):
         """Move the ball towards the goal post using the artificial potential field algorithm."""
-        print("Moving ball towards goal post using APF algorithm...")
+        print("Avoiding obstacles and moving ball towards goal post using APF algorithm...")
         ball_position = self._robot.getBallPosition()
         if ball_position and self.goal_post_position:
             # Calculate path using APF algorithm
             self.robot_position = self.find_path()
             # Move the robot towards the calculated position
             self._robot.moveToPosition(self.robot_position)
+            # Check for fall detection
+            if self._robot.isFallen():
+                self.standUp()
 
+    def standUp(self):
+        """Make the robot stand up if fallen."""
+        print("Robot has fallen. Standing up...")
+        self.standUpFromFront.play()
+    
 
     def run(self):
         """Main loop for robot control."""
@@ -211,9 +233,7 @@ class BaseController:
             elif self._state == 'tracking':
                 self.update_the_supervisor_with_the_ball_location()
                 # Move the ball towards the goal post using APF algorithm
-                self.move_ball_to_goal_post_apf()
+                self.apf()
             elif self._state == 'executing_order':
                 self.take_order()
-
-    
 
