@@ -1,0 +1,59 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/softbank/nao/protos/Nao.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/balls/protos/Ball.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.2112357296367426 0.1525328384374515 0.9654600974266351 1.9239759450445315
+  position 1.2935447885473028 -8.359968501867494 2.624657390887487
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  translation 0 -1.01 0
+  floorSize 10 10
+}
+DEF B Nao {
+  hidden rotation_34 0 1 0 0.9599999996925641
+  hidden rotation_35 0 1 0 0.9599999998625629
+  hidden rotation_37 0 0.9999999999999999 0 0.9599999996924781
+  hidden rotation_38 0 1 0 0.9599999998625749
+  hidden rotation_41 0 -1 0 0.9599999999666078
+  translation 1.1953401460133815 -3.8140399990577714 0.33256142683480727
+  rotation -0.00012795195079278246 0.03941633797613354 0.9992228659957946 0.006509369790088678
+  name "NAO2"
+  controller "Radian_BallMen"
+  channel 1
+}
+DEF C Nao {
+  translation -1.0176155998656198 -2.5763664843578398 0.3032457872062541
+  rotation 0.01187246833467362 0.052034002939856216 0.998574737830723 0.14644030610042527
+  controller "<none>"
+  channel 1
+}
+DEF SS Nao {
+  translation -0.9223008519086144 -3.9200199990442752 0.33256230163011313
+  rotation -0.00012795507395980987 0.03941730006021828 0.9992228280436061 0.006509370037295424
+  name "NAO(1)"
+  controller "Emiiter_Zones"
+  supervisor TRUE
+  channel 1
+}
+DEF A Nao {
+  translation -2.32992 -3.02 0.333378
+  rotation 5.993501419787829e-06 0.9999999999819547 -4.106455640870907e-07 0.0002575326658517846
+  name "NAO3"
+  controller "<none>"
+  channel 1
+}
+DEF BALL Ball {
+  translation -2 -1 0.1625
+  radius 0.1
+}

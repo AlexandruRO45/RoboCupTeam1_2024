@@ -1,0 +1,30 @@
+NOTE: All codes suppplied are not in their final form. some of them may crash your world
+if they run for more than 20 seconds.
+NOTE: In most of my worlds, I have used Nao robot and E-puck for expermintation
+
+Coords_Test_Nao_4: Is the most updated controller that is currently under work and modifications.
+The controller is to be excuted by a supervisor robot.
+its objectives are:
+1) Defining the coordinates of all elements on the field
+2) performs gemometry and vector calculations to determine the target's heading, distance, angle,
+find the final target and then orient itself around it accordingly (integratable with CV), capable of following any moving target once compelted.
+3) define the position of teammates (pending)
+4) USES GPS
+5) Formation to be added shortly once the code is cleaned up.
+
+The sequence starts by pressing the button "L". the robot will first iroent itself toward the new coordinates, then move toward it. it is not expected to work correclty yet as the code needs modifs for full autonomy.
+
+Fall_detection_and_recovery_f_and_b:
+This controller takes over the task of monitoring the robot's posture in a true loop, by keeping an eye on two parameters that indicate a fall, then pefroms a fall recovery action. This is designed to distiguish between front fall and back fall based on multiple experiments I have done in the simulation. For more accurate results, data will be logged and proccessed for further imporment on fall detection.
+
+the previous sequence is initiated by the letter "O", not expected to work yet but it can give an idea. Will be modified for full autonomy.
+
+Coords_test_Nao_3:
+Establishing emitter/reciever communication between the supervisor and the other nods.
+
+Test_floor, Supervisor_controller2, etc
+previous objectives around the supervisor concept, dummy code for expermintations
+
+FIS file: works given you have Fuzzy Logic Tools installed. implementable within Simulink, less accurate with Python, saved for later.
+
+Research papers: These are the latest research papers I am working on now, reach me at anytime to summrize them or any of the ones I have shared before (total of 7 papers).
