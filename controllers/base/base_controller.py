@@ -135,6 +135,19 @@ class BaseController:
             if nearest_robot:
                 self._robot.moveToGoalPost(nearest_robot, self.goal_post_position)
 
+    def moveToGoalPost(self, robot_name, goal_post_position):
+        """Move the robot towards the goal post."""
+        print(f"Moving {robot_name} towards the goal post...")
+        robot_position = self.BaseSupervisor.getRobotState(robot_name)[:3]
+        direction = goal_post_position - robot_position
+        distance = np.linalg.norm(direction)
+        if distance > 0:
+            # Normalize the direction vector
+            direction /= distance
+            # Calculate the target position
+            target_position = robot_position + direction * 0.5
+            # Move the robot towards the target position
+            self._robot.moveTo(target_position[0], target_position[1], target_position[2])
 
     def attractive_force(self):
         # Compute attractive force towards the goal
