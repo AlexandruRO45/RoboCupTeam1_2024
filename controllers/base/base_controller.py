@@ -1,14 +1,38 @@
 import os
 import sys
+import numpy as np
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 
 from controller import Keyboard, Motion
+from controllers.base.base_supervisor import BaseSupervisor
 from controllers.models.nao_robot import NaoRobot
 from controllers.utils.motion import MotionPath, MotionBase
 
 class BaseController:
     """Base controller class for robot control."""
+    RobotList = [
+        # Team Red
+        'red_goalkeeper', 
+        'red_defender',  
+        'red_sec_attacker',
+        'red_main_attacker',
+        # Team Blue
+        'blue_goalkeeper', 
+        'blue_defender',  
+        'blue_sec_attacker',
+        'blue_main_attacker',
+    ]  # List of robot names
+    goal_post_position = {
+            'Team Red': {
+                'left_post': [-4.5, 0, 0],   # [x, y, z]
+                'right_post': [-4.5, 0, 0],  # [x, y, z]
+            },
+            'Team Blue': {
+                'left_post': [4.5, 0, 0],    # [x, y, z]
+                'right_post': [4.5, 0, 0],   # [x, y, z]
+            }
+        }
 
     def __init__(self, robot: NaoRobot):
         """Initialize the BaseController."""
@@ -20,15 +44,42 @@ class BaseController:
         self._receiver.enable(self._timestep)
         self._emitter = self._robot.getEmitter("emitter")
         self._state = 'searching'
+        self.BaseSupervisor = BaseSupervisor() #this line doesn't work.. I tried but couldn't fix it
+        self.k_att = 0.5  # Attractive force coefficient
+        self.k_rep = 2.0  # Repulsive force coefficient
+        self.d_rep = 1.0  # Repulsion distance threshold
+        self.max_force = 1.0  # Maximum force magnitude
+        self.robot_position = BaseSupervisor.getBallOwner() #needs to be called the supervisor
+        self.goal_position = self.goal_post_position #needs to be updated from the supervisor but I have manually declared the position to avoid confuion
+        self.obstacle_positions = BaseSupervisor.get_all_robot_states() #needs to be called the supervisor
+        self.other_player_positions = BaseSupervisor.get_all_robot_states() #needs to be called the supervisor
 
-        # Initialize motion paths
-        self.motion_path = MotionPath("../../motions/")
-
-        # Initialize motions
-        for motion_name in self.motion_path.motion_files:
-            motion_file = self.motion_path.get_motion_file(motion_name)
-            motion_name = os.path.splitext(motion_name)[0]
-            setattr(self, motion_name, MotionBase(motion_name, motion_file))
+        # Assign motion files to attributes
+        self.handWave = Motion("../../plugins/motions/HandWave.motion")
+        self.forwards = Motion("../../plugins/motions/Forwards.motion")
+        self.forwardsSprint = Motion("../../plugins/motions/ForwardsSprint.motion")
+        self.forwards50 = Motion("../../plugins/motions/Forwards50.motion")
+        self.backwards = Motion("../../plugins/motions/Backwards.motion")
+        self.shoot = Motion("../../plugins/motions/Shoot.motion")
+        self.rightShoot = Motion("../../plugins/motions/RightShoot.motion")
+        self.longShoot = Motion("../../plugins/motions/LongPass.motion")
+        self.leftSidePass = Motion("../../plugins/motions/SidePass_Left.motion")
+        self.rightSidePass = Motion("../../plugins/motions/SidePass_Right.motion")
+        self.sideStepLeft = Motion("../../plugins/motions/SideStepLeft.motion")
+        self.sideStepRight = Motion("../../plugins/motions/SideStepRight.motion")
+        self.standUpFromFront = Motion("../../plugins/motions/StandUpFromFront.motion")
+        self.standUpFromBack = Motion("../../plugins/motions/StandUpFromBack.motion")
+        self.turnLeft10 = Motion("../../plugins/motions/TurnLeft10.motion")
+        self.turnLeft20 = Motion("../../plugins/motions/TurnLeft20.motion")
+        self.turnLeft30 = Motion("../../plugins/motions/TurnLeft30.motion")
+        self.turnLeft40 = Motion("../../plugins/motions/TurnLeft40.motion")
+        self.turnLeft60 = Motion("../../plugins/motions/TurnLeft60.motion")
+        self.turnLeft180 = Motion("../../plugins/motions/TurnLeft180.motion")
+        self.turnRight10 = Motion("../../plugins/motions/TurnRight10.motion")
+        self.turnRight10_V2 = Motion("../../plugins/motions/TurnRight10_V2.motion")
+        self.turnRight40 = Motion("../../plugins/motions/TurnRight40.motion")
+        self.turnRight60 = Motion("../../plugins/motions/TurnRight60.motion")
+        self.standInit = Motion("../../plugins/motions/StandInit.motion")
 
     def connect_to_supervisor(self):
         print("Connecting to the supervisor...")
@@ -36,26 +87,12 @@ class BaseController:
         self._receiver.enable(self._timestep)
         self._emitter = self._robot.getEmitter("emitter")
 
-    def can_see_the_ball(self):
-        """
-        Check if the ball is visible.
-        
-        Returns:
-            bool: True if the ball is visible, False otherwise.
-        """
-        print("Checking if the ball is visible...")
-        # Assuming the robot has camera sensors named upperCamera and lowerCamera
-        ball_visible_upper = self._robot.ballDetected(self._robot.upperCamera, max_distance=500)
-        ball_visible_lower = self._robot.ballDetected(self._robot.lowerCamera, max_distance=500)
-        
-        # Return True if the ball is visible in either camera's view
-        return ball_visible_upper or ball_visible_lower
-
+    
     def find_the_ball(self):
         """Search for the ball."""
         print("Searching for the ball...")
-        if not self.can_see_the_ball():
-            self._robot.rotate(angle=30)  # Placeholder for rotation
+        if not self._can_see_the_ball:
+            self.turnLeft10.play()
         self._can_see_the_ball = self._robot.ballDetected(
             self._robot.upperCamera, max_distance=500
         ) or self._robot.ballDetected(
@@ -69,46 +106,25 @@ class BaseController:
     def update_the_supervisor_with_the_ball_location(self):
         """Update supervisor with ball location."""
         print("Updating supervisor with ball location...")
-        if self.can_see_the_ball():
+        if self._can_see_the_ball:
             ball_position = self._robot.getBallPosition()
-            message = f"ball:{ball_position[0]},{ball_position[1]},{ball_position[2]}"
-            self._emitter.send(message.encode('utf-8'))
-
-    def take_order(self):
-        """Receive and execute orders from the supervisor."""
-        print("Taking orders...")
-        if self._receiver.getQueueLength() > 0:
-            message = self._receiver.getData().decode('utf-8')
-            self._receiver.nextPacket()
-            # Example command parsing
-            if message.startswith('move_to'):
-                _, x, y = message.split(':')
-                self._robot.moveTo(float(x), float(y))  # Placeholder for moveTo method
-            elif message == 'kick':
-                self._robot.kick()
-            self._state = 'executing_order'
-
-    def get_goal_post_location(self):
-        """Get the position of the goal post from the supervisor."""
-        print("Getting goal post location...")
-        # Assuming the method to get the goal post position is implemented in base_supervisor.py
-        goal_post_position = self._robot.getGoalPostPosition()
-        if goal_post_position:
-            return goal_post_position
-        else:
-            return None
+            print("ball position: ",ball_position)
+            if ball_position:
+                message = f"ball:{ball_position[0]},{ball_position[1]},{ball_position[2]}"
+                self._emitter.send(message.encode('utf-8'))
+    
 
     def move_ball_to_goal_post(self):
         """Move the ball towards the goal post using the nearest robot."""
         print("Moving ball towards goal post...")
         ball_position = self._robot.getBallPosition()
-        goal_post_position = self.get_goal_post_location()
-        if ball_position and goal_post_position:
+        
+        if ball_position and self.goal_post_position:
             # Find the nearest robot to the ball
             nearest_robot = None
             min_distance = float('inf')
-            for robot_name in self._robot.RobotList:
-                robot_position = self._robot.getRobotState(robot_name)[:3]
+            for robot_name in self.RobotList:
+                robot_position = self.BaseSupervisor.getRobotState(robot_name)[:3]
                 distance = ((ball_position[0] - robot_position[0]) ** 2 +
                             (ball_position[1] - robot_position[1]) ** 2) ** 0.5
                 if distance < min_distance:
@@ -117,7 +133,73 @@ class BaseController:
 
             # Command the nearest robot to move the ball towards the goal post
             if nearest_robot:
-                self._robot.moveToGoalPost(nearest_robot, goal_post_position)
+                self._robot.moveToGoalPost(nearest_robot, self.goal_post_position)
+
+    def moveToGoalPost(self, robot_name, goal_post_position):
+        """Move the robot towards the goal post."""
+        print(f"Moving {robot_name} towards the goal post...")
+        robot_position = self.BaseSupervisor.getRobotState(robot_name)[:3]
+        direction = goal_post_position - robot_position
+        distance = np.linalg.norm(direction)
+        if distance > 0:
+            # Normalize the direction vector
+            direction /= distance
+            # Calculate the target position
+            target_position = robot_position + direction * 0.5
+            # Move the robot towards the target position
+            self._robot.moveTo(target_position[0], target_position[1], target_position[2])
+
+    def attractive_force(self):
+        # Compute attractive force towards the goal
+        direction = self.goal_position - self.robot_position
+        distance = np.linalg.norm(direction)
+        if distance == 0:
+            return np.zeros_like(direction)
+        return self.k_att * direction / distance
+
+    def repulsive_force(self):
+        # Compute repulsive force from obstacles and other players
+        repulsive_force = np.zeros_like(self.robot_position)
+        for obstacle_position in np.vstack((self.obstacle_positions, self.other_player_positions)):
+            direction = self.robot_position - obstacle_position
+            distance = np.linalg.norm(direction)
+            if distance < self.d_rep:
+                repulsive_force += self.k_rep * (1 / distance - 1 / self.d_rep) * (1 / distance**2) * direction
+        return repulsive_force
+
+    def compute_force(self):
+        # Compute resultant force and limit its magnitude
+        attractive_force = self.attractive_force()
+        repulsive_force = self.repulsive_force()
+        total_force = attractive_force + repulsive_force
+        magnitude = np.linalg.norm(total_force)
+        if magnitude > self.max_force:
+            total_force *= self.max_force / magnitude
+        return total_force
+
+    def update_position(self):
+        # Update robot's position based on the computed force
+        force = self.compute_force()
+        self.robot_position += force
+
+    def find_path(self, max_iterations=100, tolerance=0.01):
+        # Find path using potential field algorithm
+        for _ in range(max_iterations):
+            prev_position = self.robot_position.copy()
+            self.update_position()
+            if np.linalg.norm(self.robot_position - prev_position) < tolerance:
+                break
+        return self.robot_position
+    def move_ball_to_goal_post_apf(self):
+        """Move the ball towards the goal post using the artificial potential field algorithm."""
+        print("Moving ball towards goal post using APF algorithm...")
+        ball_position = self._robot.getBallPosition()
+        if ball_position and self.goal_post_position:
+            # Calculate path using APF algorithm
+            self.robot_position = self.find_path()
+            # Move the robot towards the calculated position
+            self._robot.moveToPosition(self.robot_position)
+
 
     def run(self):
         """Main loop for robot control."""
@@ -128,12 +210,10 @@ class BaseController:
                 self.find_the_ball()
             elif self._state == 'tracking':
                 self.update_the_supervisor_with_the_ball_location()
-                self.move_ball_to_goal_post()
+                # Move the ball towards the goal post using APF algorithm
+                self.move_ball_to_goal_post_apf()
             elif self._state == 'executing_order':
                 self.take_order()
 
-# if __name__ == "__main__":
-#     # Assuming NaoRobot is initialized and passed correctly
-#     nao_robot = NaoRobot()  # This line is placeholder and needs actual robot initialization
-#     controller = BaseController(nao_robot)
-#     controller.run()
+    
+
