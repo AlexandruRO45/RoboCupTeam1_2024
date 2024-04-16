@@ -1,8 +1,8 @@
 # RoboCupTeam1_2024
 
 ## Project Status: Archived
-
-**Please note:** This repository is no longer under active development and there will be no future updates. It was previously developed as part of a project which aimed for participation in RoboCup 2024 but has since been discontinued. All resources within this repository, including research materials, unit tests, and base controllers, are left available for public use. We hope these resources will be useful for those interested in similar fields of study or development.
+> [!NOTE]
+> This repository is no longer under active development and there will be no future updates. It was previously developed as part of a project which aimed to help complete a course module at the University Of Glasgow intended for possible participation in RoboCup 2024 but has since been discontinued. All resources within this repository, including research materials under libraries, unit tests, and base controllers, are left available for public use. We hope these resources will be useful for those interested in similar fields of study or development.
 
 ## Description
 
