@@ -1,8 +1,8 @@
 # RoboCupTeam1_2024
 
-## Project Status: Work in Progress
+## Project Status: Archived
 
-**Please note:** This repository is currently under active development as part of our preparation for the possible participation to RoboCup 2024, full code being not yet released prublicly due to University of Glasgow regulation to keep it under restricted access until the final report deadline. The codebase, documentation, and features are in a state of flux and may undergo significant changes. We encourage viewers to check back regularly for updates. Contributions and feedback are welcome; however, please be aware that the project's structure and objectives might evolve as we progress.
+**Please note:** This repository is no longer under active development and there will be no future updates. It was previously developed as part of a project which aimed for participation in RoboCup 2024 but has since been discontinued. All resources within this repository, including research materials, unit tests, and base controllers, are left available for public use. We hope these resources will be useful for those interested in similar fields of study or development.
 
 ## Description
 
